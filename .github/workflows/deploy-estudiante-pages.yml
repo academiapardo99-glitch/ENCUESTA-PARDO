@@ -1,0 +1,50 @@
+name: Publicar portal del estudiante en GitHub Pages
+
+on:
+  push:
+    branches:
+      - deploy/estudiante-pages
+    paths:
+      - frontend-estudiante/**
+      - .github/workflows/deploy-estudiante-pages.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: github-pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Descargar el repositorio
+        uses: actions/checkout@v4
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: frontend-estudiante/package-lock.json
+      - name: Configurar GitHub Pages
+        uses: actions/configure-pages@v5
+      - name: Instalar dependencias y compilar el portal
+        working-directory: frontend-estudiante
+        run: npm ci && npm run build
+        env:
+          VITE_BASE: /${{ github.event.repository.name }}/
+          VITE_API_URL: https://encuesta-estudiantes.encuestaspardo.workers.dev/api
+      - name: Subir los archivos compilados
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: frontend-estudiante/dist
+      - name: Publicar el portal
+        id: deployment
+        uses: actions/deploy-pages@v4

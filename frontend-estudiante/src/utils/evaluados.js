@@ -55,7 +55,8 @@ export function reiniciarEvaluados() {
 // Permite que varias pestañas abiertas del portal se enteren del cambio.
 export function onEvaluadosChange(callback) {
   const alCambiar = (evento) => {
-    if (evento.key === CLAVE || evento.key === null) callback();
+    if (evento.key !== CLAVE && evento.key !== null) return;
+    callback();
   };
   // Cuando la app reescribe el valor, `storage` no se dispara en la misma
   // pestaña; se usa un evento propio para avisar al instante.

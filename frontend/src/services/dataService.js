@@ -84,6 +84,24 @@ export function gruposDeCurso(curso) {
   return [];
 }
 
+/**
+ * Docentes que pertenecen a la modalidad y grupo elegidos:
+ *  1. el docente está activo,
+ *  2. enseña esa modalidad (`modalidadIds`),
+ *  3. el curso al que pertenece se dicta en ese grupo (`grupoIds`).
+ * Sin modalidad o sin grupo se devuelve una lista vacía.
+ */
+export function docentesDelGrupo(docentes, cursos, { modalidadId, grupoId } = {}) {
+  if (!modalidadId || !grupoId) return [];
+  const cursosPorId = new Map(cursos.map((c) => [c.id, c]));
+  return docentes.filter((d) => {
+    if (d.estado !== 'activo') return false;
+    if (!modalidadesDe(d).includes(modalidadId)) return false;
+    const curso = cursosPorId.get(d.cursoId);
+    return Boolean(curso) && gruposDeCurso(curso).includes(grupoId);
+  });
+}
+
 // Congela los datos del docente/curso/grupo en el momento de evaluar, para que
 // el historial no cambie si luego se edita el catálogo.
 export function congelarDocente(docente, curso, grupo, modalidad) {

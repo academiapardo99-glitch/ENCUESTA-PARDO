@@ -1,6 +1,9 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useAppData, nombreCurso } from '../context/AppDataContext.jsx';
-import { preguntas, secciones, tituloEncuesta, subtituloEncuesta, congelarDocente, nombreModalidad, nombreDocente } from '../services/dataService.js';
+import {
+  preguntas, secciones, tituloEncuesta, subtituloEncuesta, congelarDocente, nombreModalidad, nombreDocente,
+  docentesDelGrupo, gruposDeCurso,
+} from '../services/dataService.js';
 import ConfirmDialog from '../components/comunes/ConfirmDialog.jsx';
 import Icon from '../components/comunes/Icon.jsx';
 import SelectorModalidadGrupo from '../components/encuestas/SelectorModalidadGrupo.jsx';
@@ -22,7 +25,6 @@ export default function EncuestaEstudiantePage() {
   const [enviando, setEnviando] = useState(false);
   const [enviado, setEnviado] = useState(null);
 
-  const activos = docentes.filter((d) => d.estado === 'activo');
   const docente = docentes.find((d) => d.id === seleccion.docenteId);
   const grupo = grupos.find((g) => g.id === seleccion.grupoId);
   const modalidad = modalidades.find((m) => m.id === seleccion.modalidadId);
@@ -35,11 +37,40 @@ export default function EncuestaEstudiantePage() {
     preguntas: preguntas.filter((p) => p.seccion === seccion.id),
   })).filter((seccion) => seccion.preguntas.length);
 
-  const docentesLista = (filtroCurso ? activos.filter((d) => d.cursoId === filtroCurso) : activos)
-    .sort((a, b) => nombreDocente(a).localeCompare(nombreDocente(b), 'es'));
+  // Solo los docentes que dan clase a la modalidad y grupo elegidos; el resto
+  // del catálogo nunca se muestra en el portal público.
+  const docentesDelGrupoActual = useMemo(
+    () => docentesDelGrupo(docentes, cursos, seleccion)
+      .sort((a, b) => nombreDocente(a).localeCompare(nombreDocente(b), 'es')),
+    [docentes, cursos, seleccion.modalidadId, seleccion.grupoId]
+  );
+
+  // Cursos que se dictan en el grupo elegido (para el filtro opcional).
+  const cursosDelGrupo = useMemo(() => {
+    if (!seleccion.grupoId) return [];
+    return cursos
+      .filter((c) => c.activo !== false && gruposDeCurso(c).includes(seleccion.grupoId))
+      .sort((a, b) => a.nombre.localeCompare(b.nombre, 'es'));
+  }, [cursos, seleccion.grupoId]);
+
+  const docentesLista = filtroCurso
+    ? docentesDelGrupoActual.filter((d) => d.cursoId === filtroCurso)
+    : docentesDelGrupoActual;
 
   function cambiarSeleccion(cambios) {
-    setSeleccion((s) => ({ ...s, ...cambios }));
+    setSeleccion((s) => {
+      const nuevo = { ...s, ...cambios };
+      // Al cambiar modalidad o grupo, el docente elegido deja de ser válido.
+      if (
+        (cambios.modalidadId !== undefined && cambios.modalidadId !== s.modalidadId)
+        || (cambios.grupoId !== undefined && cambios.grupoId !== s.grupoId)
+      ) {
+        nuevo.docenteId = '';
+        nuevo.respuestas = {};
+        setFiltroCurso('');
+      }
+      return nuevo;
+    });
     if (error) setError('');
   }
 
@@ -52,6 +83,11 @@ export default function EncuestaEstudiantePage() {
     e.preventDefault();
     if (!seleccion.docenteId) {
       setError('Selecciona el docente a evaluar.');
+      return;
+    }
+    // El docente debe seguir perteneciendo a la modalidad y grupo elegidos.
+    if (seleccion.docenteId !== docente?.id || !docentesDelGrupoActual.some((d) => d.id === seleccion.docenteId)) {
+      setError('El docente seleccionado no dicta clases en este grupo. Elige otro.');
       return;
     }
     setPaso(4);
@@ -176,16 +212,23 @@ export default function EncuestaEstudiantePage() {
           </div>
 
           <form onSubmit={irAPreguntas} className="form" noValidate>
-            <label className="campo">
-              <span>Filtrar por curso (opcional)</span>
-              <select className="input" value={filtroCurso} onChange={(e) => setFiltroCurso(e.target.value)}>
-                <option value="">Todos los cursos</option>
-                {cursos.map((c) => <option key={c.id} value={c.id}>{c.nombre}</option>)}
-              </select>
-            </label>
+            {cursosDelGrupo.length > 1 && (
+              <label className="campo">
+                <span>Filtrar por curso (opcional)</span>
+                <select className="input" value={filtroCurso} onChange={(e) => setFiltroCurso(e.target.value)}>
+                  <option value="">Todos los cursos de mi grupo</option>
+                  {cursosDelGrupo.map((c) => <option key={c.id} value={c.id}>{c.nombre}</option>)}
+                </select>
+              </label>
+            )}
 
-            {docentesLista.length === 0 ? (
-              <p className="alerta alerta-error">No hay docentes activos disponibles para evaluar.</p>
+            {docentesDelGrupoActual.length === 0 ? (
+              <p className="alerta alerta-error">
+                Aún no hay docentes registrados para <strong>{modalidad?.nombre}</strong> · Grupo <strong>{grupo?.nombre}</strong>.
+                Verifica tu modalidad y grupo, o consulta a coordinación.
+              </p>
+            ) : docentesLista.length === 0 ? (
+              <p className="mensaje-vacio">No hay docentes de ese curso en tu grupo.</p>
             ) : (
               <div className="grid-docentes" role="radiogroup" aria-label="Docente">
                 {docentesLista.map((d) => {

@@ -63,8 +63,19 @@ create table if not exists public.encuestas (
   creado_en         timestamptz
 );
 
-create index if not exists encuestas_docente_idx on public.encuestas ("docenteId");
-create index if not exists encuestas_creado_idx on public.encuestas ("creadoEn" desc);
+-- Los índices van en bloques DO para que "if not exists" funcione también en
+-- Postgres 15 (en un CREATE INDEX directo produce un aviso que Supabase muestra
+-- como "Backend error" en el SQL Editor).
+do $$
+begin
+  if not exists (select 1 from pg_indexes where schemaname = 'public' and indexname = 'encuestas_docente_idx') then
+    create index encuestas_docente_idx on public.encuestas ("docenteId");
+  end if;
+  if not exists (select 1 from pg_indexes where schemaname = 'public' and indexname = 'encuestas_creado_idx') then
+    create index encuestas_creado_idx on public.encuestas ("creadoEn" desc);
+  end if;
+end
+$$;
 
 -- ---------- Seguridad ----------
 -- Todo el acceso pasa por el backend (service_role); el frontend y el portal
@@ -74,7 +85,28 @@ alter table public.docentes enable row level security;
 alter table public.grupos enable row level security;
 alter table public.encuestas enable row level security;
 
--- Nota: service_role omite RLS. Si se publica el Worker con la clave anon,
--- descomenta esta política (solo INSERT en encuestas):
--- create policy "encuestas_insert_publico" on public.encuestas
---   for insert to anon with check (true);
+-- service_role omite RLS, así que el backend (PERSISTENCIA=supabase) funciona
+-- sin políticas adicionales.
+--
+-- El Worker usa SUPABASE_KEY; si esa clave es la `anon`, necesita permisos:
+--   catálogo: SELECT en cursos, docentes y grupos
+--   portal:   INSERT en encuestas
+-- Al ejecutar el script se crean estas políticas para `anon`. Si prefieres que
+-- el catálogo NO sea accesible con la clave anon, elimina las tres primeras y
+-- configura el Worker con la service_role.
+do $$
+begin
+  if not exists (select 1 from pg_policies where schemaname = 'public' and tablename = 'cursos' and policyname = 'lectura_publica') then
+    create policy "lectura_publica" on public.cursos for select to anon using (true);
+  end if;
+  if not exists (select 1 from pg_policies where schemaname = 'public' and tablename = 'docentes' and policyname = 'lectura_publica') then
+    create policy "lectura_publica" on public.docentes for select to anon using (true);
+  end if;
+  if not exists (select 1 from pg_policies where schemaname = 'public' and tablename = 'grupos' and policyname = 'lectura_publica') then
+    create policy "lectura_publica" on public.grupos for select to anon using (true);
+  end if;
+  if not exists (select 1 from pg_policies where schemaname = 'public' and tablename = 'encuestas' and policyname = 'encuestas_insert_publico') then
+    create policy "encuestas_insert_publico" on public.encuestas for insert to anon with check (true);
+  end if;
+end
+$$;

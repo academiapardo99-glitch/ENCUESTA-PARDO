@@ -39,7 +39,18 @@ export async function guardarEncuestaSupabase(encuesta, { url, key }) {
       Prefer: 'return=minimal',
     },
     body: JSON.stringify({
+      // Se escriben ambas formas: el panel administrativo lee las columnas
+      // camelCase, y las snake_case quedan como respaldo explícito.
       id: encuesta.id,
+      "creadoEn": encuesta.creadoEn || new Date().toISOString(),
+      "docenteId": encuesta.docenteId,
+      "cursoId": encuesta.cursoId,
+      "modalidadId": encuesta.modalidadId,
+      "grupoId": encuesta.grupoId,
+      "docenteNombre": encuesta.docenteNombre,
+      "cursoNombre": encuesta.cursoNombre,
+      "modalidadNombre": encuesta.modalidadNombre,
+      "grupoNombre": encuesta.grupoNombre,
       creado_en: encuesta.creadoEn || new Date().toISOString(),
       docente_id: encuesta.docenteId,
       curso_id: encuesta.cursoId,

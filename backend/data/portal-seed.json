@@ -1,7 +1,687 @@
 {
-  "cursos": [],
-  "docentes": [],
+  "cursos": [
+    {
+      "id": "86a5ff35-84da-458c-9f1e-5ac88eb357e3",
+      "nombre": "ÁLGEBRA",
+      "grupoIds": [
+        "ac64a489-708f-4c11-a796-f8d4d557c3d8",
+        "be3e9ece-f674-4f85-957c-55604d02d2b0",
+        "9aa14422-ed5e-44cd-8ea8-0650ebcb0877",
+        "75d7159d-9954-4940-8e00-c0643dff266e",
+        "de244952-2ff8-40e1-b15b-233ca5d2b402",
+        "aa05f178-0a97-4a55-b2ba-a584f3b24a1a",
+        "4fbfc6dd-5c97-43b2-8f89-e08fa907f6e0",
+        "0f73c9a6-7a84-42b8-86f7-88cef4f87202",
+        "0a68b5cf-c142-4dc5-9fd9-2d0363f44ac5",
+        "314fc0ba-38f7-4b17-a159-2b16986673ed",
+        "800e8495-d1e2-4720-9292-4127800d1809",
+        "7823cd70-3df5-4d0a-8040-5b414c23bf75",
+        "2698c7dd-10cf-493d-9ff2-de09446d9d87",
+        "33b224d8-e89f-495e-bf13-a95e85992edc",
+        "012a4df7-f063-47ff-acc5-54eb849b172b",
+        "d191e711-541f-4c84-ae82-a909d4cad70c"
+      ],
+      "activo": true
+    },
+    {
+      "id": "1073f980-c70e-4020-9e17-e2c18441df87",
+      "nombre": "ARITMÉTICA",
+      "grupoIds": [
+        "ac64a489-708f-4c11-a796-f8d4d557c3d8",
+        "be3e9ece-f674-4f85-957c-55604d02d2b0",
+        "9aa14422-ed5e-44cd-8ea8-0650ebcb0877",
+        "75d7159d-9954-4940-8e00-c0643dff266e",
+        "de244952-2ff8-40e1-b15b-233ca5d2b402",
+        "aa05f178-0a97-4a55-b2ba-a584f3b24a1a",
+        "4fbfc6dd-5c97-43b2-8f89-e08fa907f6e0",
+        "0f73c9a6-7a84-42b8-86f7-88cef4f87202",
+        "0a68b5cf-c142-4dc5-9fd9-2d0363f44ac5",
+        "314fc0ba-38f7-4b17-a159-2b16986673ed",
+        "800e8495-d1e2-4720-9292-4127800d1809",
+        "7823cd70-3df5-4d0a-8040-5b414c23bf75",
+        "2698c7dd-10cf-493d-9ff2-de09446d9d87",
+        "33b224d8-e89f-495e-bf13-a95e85992edc",
+        "012a4df7-f063-47ff-acc5-54eb849b172b",
+        "d191e711-541f-4c84-ae82-a909d4cad70c"
+      ],
+      "activo": true
+    },
+    {
+      "id": "4ed44465-2a86-4f9a-8c87-d31e9db50fa5",
+      "nombre": "COMPETENCIA COMUNICATIVA",
+      "grupoIds": [
+        "ac64a489-708f-4c11-a796-f8d4d557c3d8",
+        "be3e9ece-f674-4f85-957c-55604d02d2b0",
+        "9aa14422-ed5e-44cd-8ea8-0650ebcb0877",
+        "75d7159d-9954-4940-8e00-c0643dff266e",
+        "de244952-2ff8-40e1-b15b-233ca5d2b402",
+        "aa05f178-0a97-4a55-b2ba-a584f3b24a1a",
+        "4fbfc6dd-5c97-43b2-8f89-e08fa907f6e0",
+        "0f73c9a6-7a84-42b8-86f7-88cef4f87202",
+        "0a68b5cf-c142-4dc5-9fd9-2d0363f44ac5",
+        "314fc0ba-38f7-4b17-a159-2b16986673ed",
+        "800e8495-d1e2-4720-9292-4127800d1809",
+        "7823cd70-3df5-4d0a-8040-5b414c23bf75",
+        "2698c7dd-10cf-493d-9ff2-de09446d9d87",
+        "33b224d8-e89f-495e-bf13-a95e85992edc",
+        "012a4df7-f063-47ff-acc5-54eb849b172b",
+        "d191e711-541f-4c84-ae82-a909d4cad70c"
+      ],
+      "activo": true
+    },
+    {
+      "id": "0cdab7c5-2d64-44ac-ad1a-9f75c712cdcf",
+      "nombre": "QUÍMICA",
+      "grupoIds": [
+        "ac64a489-708f-4c11-a796-f8d4d557c3d8",
+        "be3e9ece-f674-4f85-957c-55604d02d2b0",
+        "de244952-2ff8-40e1-b15b-233ca5d2b402",
+        "aa05f178-0a97-4a55-b2ba-a584f3b24a1a",
+        "0a68b5cf-c142-4dc5-9fd9-2d0363f44ac5",
+        "314fc0ba-38f7-4b17-a159-2b16986673ed",
+        "2698c7dd-10cf-493d-9ff2-de09446d9d87",
+        "33b224d8-e89f-495e-bf13-a95e85992edc"
+      ],
+      "activo": true
+    },
+    {
+      "id": "a8a08f01-2b6b-45bf-b9b5-7514dbb94ad9",
+      "nombre": "FÍSICA",
+      "grupoIds": [
+        "ac64a489-708f-4c11-a796-f8d4d557c3d8",
+        "be3e9ece-f674-4f85-957c-55604d02d2b0",
+        "de244952-2ff8-40e1-b15b-233ca5d2b402",
+        "aa05f178-0a97-4a55-b2ba-a584f3b24a1a",
+        "0a68b5cf-c142-4dc5-9fd9-2d0363f44ac5",
+        "314fc0ba-38f7-4b17-a159-2b16986673ed",
+        "2698c7dd-10cf-493d-9ff2-de09446d9d87",
+        "33b224d8-e89f-495e-bf13-a95e85992edc"
+      ],
+      "activo": true
+    },
+    {
+      "id": "61d2b4c0-31b0-4c85-994d-f6754821c4cc",
+      "nombre": "GEOMETRÍA",
+      "grupoIds": [
+        "ac64a489-708f-4c11-a796-f8d4d557c3d8",
+        "de244952-2ff8-40e1-b15b-233ca5d2b402",
+        "0a68b5cf-c142-4dc5-9fd9-2d0363f44ac5",
+        "2698c7dd-10cf-493d-9ff2-de09446d9d87"
+      ],
+      "activo": true
+    },
+    {
+      "id": "994fa8b1-761f-4328-b243-59a8d3674861",
+      "nombre": "BIOLOGÍA",
+      "grupoIds": [
+        "be3e9ece-f674-4f85-957c-55604d02d2b0",
+        "aa05f178-0a97-4a55-b2ba-a584f3b24a1a",
+        "314fc0ba-38f7-4b17-a159-2b16986673ed",
+        "33b224d8-e89f-495e-bf13-a95e85992edc"
+      ],
+      "activo": true
+    },
+    {
+      "id": "ad9b63c7-6c99-4819-ae0e-3916f23808d8",
+      "nombre": "ANATOMÍA",
+      "grupoIds": [
+        "be3e9ece-f674-4f85-957c-55604d02d2b0",
+        "aa05f178-0a97-4a55-b2ba-a584f3b24a1a",
+        "314fc0ba-38f7-4b17-a159-2b16986673ed",
+        "33b224d8-e89f-495e-bf13-a95e85992edc"
+      ],
+      "activo": true
+    },
+    {
+      "id": "9b20da2b-05df-4249-914b-0542f8629b9a",
+      "nombre": "HISTORIA",
+      "grupoIds": [
+        "9aa14422-ed5e-44cd-8ea8-0650ebcb0877",
+        "75d7159d-9954-4940-8e00-c0643dff266e",
+        "4fbfc6dd-5c97-43b2-8f89-e08fa907f6e0",
+        "0f73c9a6-7a84-42b8-86f7-88cef4f87202",
+        "800e8495-d1e2-4720-9292-4127800d1809",
+        "7823cd70-3df5-4d0a-8040-5b414c23bf75",
+        "012a4df7-f063-47ff-acc5-54eb849b172b",
+        "d191e711-541f-4c84-ae82-a909d4cad70c"
+      ],
+      "activo": true
+    },
+    {
+      "id": "eb8dd203-d086-4fc2-9ca7-e0811cd4b8b2",
+      "nombre": "GEOGRAFÍA",
+      "grupoIds": [
+        "9aa14422-ed5e-44cd-8ea8-0650ebcb0877",
+        "75d7159d-9954-4940-8e00-c0643dff266e",
+        "4fbfc6dd-5c97-43b2-8f89-e08fa907f6e0",
+        "0f73c9a6-7a84-42b8-86f7-88cef4f87202",
+        "800e8495-d1e2-4720-9292-4127800d1809",
+        "7823cd70-3df5-4d0a-8040-5b414c23bf75",
+        "012a4df7-f063-47ff-acc5-54eb849b172b",
+        "d191e711-541f-4c84-ae82-a909d4cad70c"
+      ],
+      "activo": true
+    },
+    {
+      "id": "6dc67698-b418-45bf-9c4d-1326f47058b7",
+      "nombre": "CÍVICA",
+      "grupoIds": [
+        "9aa14422-ed5e-44cd-8ea8-0650ebcb0877",
+        "75d7159d-9954-4940-8e00-c0643dff266e",
+        "4fbfc6dd-5c97-43b2-8f89-e08fa907f6e0",
+        "0f73c9a6-7a84-42b8-86f7-88cef4f87202",
+        "800e8495-d1e2-4720-9292-4127800d1809",
+        "7823cd70-3df5-4d0a-8040-5b414c23bf75",
+        "012a4df7-f063-47ff-acc5-54eb849b172b",
+        "d191e711-541f-4c84-ae82-a909d4cad70c"
+      ],
+      "activo": true
+    },
+    {
+      "id": "a417d232-933a-41ce-860d-2b695cca5551",
+      "nombre": "ECONOMÍA",
+      "grupoIds": [
+        "9aa14422-ed5e-44cd-8ea8-0650ebcb0877",
+        "4fbfc6dd-5c97-43b2-8f89-e08fa907f6e0",
+        "800e8495-d1e2-4720-9292-4127800d1809",
+        "012a4df7-f063-47ff-acc5-54eb849b172b"
+      ],
+      "activo": true
+    },
+    {
+      "id": "a4216147-765f-4d72-a9fe-368d9a963354",
+      "nombre": "FILOSOFÍA",
+      "grupoIds": [
+        "75d7159d-9954-4940-8e00-c0643dff266e",
+        "0f73c9a6-7a84-42b8-86f7-88cef4f87202",
+        "7823cd70-3df5-4d0a-8040-5b414c23bf75",
+        "d191e711-541f-4c84-ae82-a909d4cad70c"
+      ],
+      "activo": true
+    }
+  ],
+  "docentes": [
+    {
+      "id": "51a5da8d-802c-4dc8-922e-c351331f7fae",
+      "nombre": "JULIO",
+      "cursoId": "86a5ff35-84da-458c-9f1e-5ac88eb357e3",
+      "modalidadIds": [
+        "colegio",
+        "primera"
+      ],
+      "estado": "activo"
+    },
+    {
+      "id": "15f66fb1-b823-42aa-9daa-df83f661ef42",
+      "nombre": "COTACHO",
+      "cursoId": "86a5ff35-84da-458c-9f1e-5ac88eb357e3",
+      "modalidadIds": [
+        "colegio",
+        "primera"
+      ],
+      "estado": "activo"
+    },
+    {
+      "id": "3499b662-5fa4-4453-89e1-25fb28e6fd50",
+      "nombre": "ANGEL",
+      "cursoId": "86a5ff35-84da-458c-9f1e-5ac88eb357e3",
+      "modalidadIds": [
+        "colegio",
+        "primera"
+      ],
+      "estado": "activo"
+    },
+    {
+      "id": "2b92f0c1-6d2c-498b-934c-cfb34fa753d8",
+      "nombre": "PASTOR",
+      "cursoId": "1073f980-c70e-4020-9e17-e2c18441df87",
+      "modalidadIds": [
+        "colegio",
+        "primera"
+      ],
+      "estado": "activo"
+    },
+    {
+      "id": "bb71d241-0455-4fea-a784-6e7d18a95ee0",
+      "nombre": "WILLIAM",
+      "cursoId": "1073f980-c70e-4020-9e17-e2c18441df87",
+      "modalidadIds": [
+        "colegio",
+        "primera"
+      ],
+      "estado": "activo"
+    },
+    {
+      "id": "9dffffcc-f811-41b6-a1b4-40960199e1d2",
+      "nombre": "ANDERSON",
+      "cursoId": "1073f980-c70e-4020-9e17-e2c18441df87",
+      "modalidadIds": [
+        "primera",
+        "colegio"
+      ],
+      "estado": "activo"
+    },
+    {
+      "id": "b05c13b1-2257-4948-9e4f-853a5eea0440",
+      "nombre": "ALEX FRANCES",
+      "cursoId": "1073f980-c70e-4020-9e17-e2c18441df87",
+      "modalidadIds": [
+        "colegio",
+        "primera"
+      ],
+      "estado": "activo"
+    },
+    {
+      "id": "02fbdddd-7291-4ea8-be38-c228d26111fb",
+      "nombre": "CHAMI",
+      "cursoId": "4ed44465-2a86-4f9a-8c87-d31e9db50fa5",
+      "modalidadIds": [
+        "colegio",
+        "primera"
+      ],
+      "estado": "activo"
+    },
+    {
+      "id": "84cb2dff-8857-4ea9-8d97-839564b58cda",
+      "nombre": "SANTIAGO",
+      "cursoId": "4ed44465-2a86-4f9a-8c87-d31e9db50fa5",
+      "modalidadIds": [
+        "colegio",
+        "primera"
+      ],
+      "estado": "activo"
+    },
+    {
+      "id": "c1f6c4ce-ac82-4c94-91f0-89f12b3c8c81",
+      "nombre": "MEXICANO",
+      "cursoId": "4ed44465-2a86-4f9a-8c87-d31e9db50fa5",
+      "modalidadIds": [
+        "colegio",
+        "primera",
+        "ordinario",
+        "cepu"
+      ],
+      "estado": "activo"
+    },
+    {
+      "id": "9a515210-3459-400a-9924-ea5827356472",
+      "nombre": "MAÑAS",
+      "cursoId": "0cdab7c5-2d64-44ac-ad1a-9f75c712cdcf",
+      "modalidadIds": [
+        "primera",
+        "colegio"
+      ],
+      "estado": "activo"
+    },
+    {
+      "id": "a1869737-d3ff-48ee-8f83-defa56666f29",
+      "nombre": "JOS HOLGUIN",
+      "cursoId": "0cdab7c5-2d64-44ac-ad1a-9f75c712cdcf",
+      "modalidadIds": [
+        "colegio",
+        "primera"
+      ],
+      "estado": "activo"
+    },
+    {
+      "id": "f501e20e-31be-4785-839b-651202b3e775",
+      "nombre": "LASTRA",
+      "cursoId": "a8a08f01-2b6b-45bf-b9b5-7514dbb94ad9",
+      "modalidadIds": [
+        "colegio",
+        "primera"
+      ],
+      "estado": "activo"
+    },
+    {
+      "id": "fcfa9b32-7c7e-498a-94fc-fd0dac639ff0",
+      "nombre": "RAFAEL",
+      "cursoId": "a8a08f01-2b6b-45bf-b9b5-7514dbb94ad9",
+      "modalidadIds": [
+        "colegio",
+        "primera"
+      ],
+      "estado": "activo"
+    },
+    {
+      "id": "6174c354-b257-4700-a7bb-b6fb3921e074",
+      "nombre": "BLADI",
+      "cursoId": "61d2b4c0-31b0-4c85-994d-f6754821c4cc",
+      "modalidadIds": [
+        "colegio",
+        "primera",
+        "ordinario",
+        "cepu"
+      ],
+      "estado": "activo"
+    },
+    {
+      "id": "3b225316-47ba-461c-8965-9379f0eb39bd",
+      "nombre": "DARIO",
+      "cursoId": "61d2b4c0-31b0-4c85-994d-f6754821c4cc",
+      "modalidadIds": [
+        "colegio",
+        "primera",
+        "cepu",
+        "ordinario"
+      ],
+      "estado": "activo"
+    },
+    {
+      "id": "f0f4b0e4-5c9e-473c-a733-09ab8db9b237",
+      "nombre": "GUILE",
+      "cursoId": "ad9b63c7-6c99-4819-ae0e-3916f23808d8",
+      "modalidadIds": [
+        "colegio",
+        "primera"
+      ],
+      "estado": "activo"
+    },
+    {
+      "id": "db95f29a-dd05-436c-9ede-8b318d73ab6c",
+      "nombre": "MOCHICA",
+      "cursoId": "9b20da2b-05df-4249-914b-0542f8629b9a",
+      "modalidadIds": [
+        "colegio",
+        "primera",
+        "ordinario",
+        "cepu"
+      ],
+      "estado": "activo"
+    },
+    {
+      "id": "8458683a-41e7-4c69-82b5-718bfea0d0f1",
+      "nombre": "JOSUE",
+      "cursoId": "eb8dd203-d086-4fc2-9ca7-e0811cd4b8b2",
+      "modalidadIds": [
+        "primera",
+        "colegio"
+      ],
+      "estado": "activo"
+    },
+    {
+      "id": "18f8c32a-43fa-43b5-be6a-535b2b4506e6",
+      "nombre": "COSITO",
+      "cursoId": "6dc67698-b418-45bf-9c4d-1326f47058b7",
+      "modalidadIds": [
+        "colegio",
+        "primera",
+        "ordinario",
+        "cepu"
+      ],
+      "estado": "activo"
+    },
+    {
+      "id": "800f214b-90b4-48d7-9207-c12041627234",
+      "nombre": "MARVIN",
+      "cursoId": "6dc67698-b418-45bf-9c4d-1326f47058b7",
+      "modalidadIds": [
+        "colegio",
+        "primera"
+      ],
+      "estado": "activo"
+    },
+    {
+      "id": "c88c9634-c72b-4548-93ee-04e109a3ad02",
+      "nombre": "JAIME",
+      "cursoId": "a417d232-933a-41ce-860d-2b695cca5551",
+      "modalidadIds": [
+        "colegio",
+        "primera",
+        "ordinario",
+        "cepu"
+      ],
+      "estado": "activo"
+    },
+    {
+      "id": "5e141f8d-e9cb-4cdf-8854-bed366d2fdcc",
+      "nombre": "WALLY",
+      "cursoId": "a4216147-765f-4d72-a9fe-368d9a963354",
+      "modalidadIds": [
+        "colegio",
+        "primera",
+        "ordinario",
+        "cepu"
+      ],
+      "estado": "activo"
+    },
+    {
+      "id": "9cefdaeb-b3ff-4b96-bf0e-115e4ded9b90",
+      "nombre": "MOSTA",
+      "cursoId": "86a5ff35-84da-458c-9f1e-5ac88eb357e3",
+      "modalidadIds": [
+        "ordinario",
+        "cepu"
+      ],
+      "estado": "activo"
+    },
+    {
+      "id": "febfbc2f-5922-4860-8249-dd68bf5276fe",
+      "nombre": "FRODO",
+      "cursoId": "86a5ff35-84da-458c-9f1e-5ac88eb357e3",
+      "modalidadIds": [
+        "ordinario",
+        "cepu"
+      ],
+      "estado": "activo"
+    },
+    {
+      "id": "62085be0-c57d-481b-ac4b-db8a1dd76a6e",
+      "nombre": "WILD",
+      "cursoId": "1073f980-c70e-4020-9e17-e2c18441df87",
+      "modalidadIds": [
+        "ordinario",
+        "cepu"
+      ],
+      "estado": "activo"
+    },
+    {
+      "id": "f02bf462-8bdc-490f-88eb-f295c7847ab0",
+      "nombre": "LOPEZ",
+      "cursoId": "4ed44465-2a86-4f9a-8c87-d31e9db50fa5",
+      "modalidadIds": [
+        "ordinario",
+        "cepu"
+      ],
+      "estado": "activo"
+    },
+    {
+      "id": "eb5b02e1-138a-48fe-ba3c-5769127bb41b",
+      "nombre": "GATO",
+      "cursoId": "0cdab7c5-2d64-44ac-ad1a-9f75c712cdcf",
+      "modalidadIds": [
+        "ordinario",
+        "cepu"
+      ],
+      "estado": "activo"
+    },
+    {
+      "id": "ccd57ae8-70e9-4f5e-b6b8-d985629bd4c9",
+      "nombre": "ALBERT",
+      "cursoId": "a8a08f01-2b6b-45bf-b9b5-7514dbb94ad9",
+      "modalidadIds": [
+        "ordinario",
+        "cepu"
+      ],
+      "estado": "activo"
+    },
+    {
+      "id": "60d0422c-8370-4022-9cf1-a3054bf136cf",
+      "nombre": "ZORRO",
+      "cursoId": "a8a08f01-2b6b-45bf-b9b5-7514dbb94ad9",
+      "modalidadIds": [
+        "ordinario",
+        "cepu"
+      ],
+      "estado": "activo"
+    },
+    {
+      "id": "4c6652b8-e2fb-4a46-8021-dbf0dd88eed0",
+      "nombre": "JOSE LUNA",
+      "cursoId": "ad9b63c7-6c99-4819-ae0e-3916f23808d8",
+      "modalidadIds": [
+        "ordinario",
+        "cepu"
+      ],
+      "estado": "activo"
+    },
+    {
+      "id": "e06f1a87-4b8e-40c5-baa7-b42040f7b65e",
+      "nombre": "PUKA",
+      "cursoId": "eb8dd203-d086-4fc2-9ca7-e0811cd4b8b2",
+      "modalidadIds": [
+        "ordinario",
+        "cepu"
+      ],
+      "estado": "activo"
+    },
+    {
+      "id": "81d7a951-a1f5-4710-be87-21afdf8ac07f",
+      "nombre": "RODRIGO",
+      "cursoId": "6dc67698-b418-45bf-9c4d-1326f47058b7",
+      "modalidadIds": [
+        "ordinario",
+        "cepu"
+      ],
+      "estado": "activo"
+    },
+    {
+      "id": "a6da0f8e-f9ae-4408-b428-b2adecac0f19",
+      "nombre": "FOX",
+      "cursoId": "a4216147-765f-4d72-a9fe-368d9a963354",
+      "modalidadIds": [
+        "ordinario",
+        "cepu"
+      ],
+      "estado": "activo"
+    }
+  ],
   "encuestas": [],
-  "grupos": [],
+  "grupos": [
+    {
+      "modalidadId": "colegio",
+      "nombre": "A",
+      "activo": true,
+      "id": "ac64a489-708f-4c11-a796-f8d4d557c3d8"
+    },
+    {
+      "modalidadId": "colegio",
+      "nombre": "B",
+      "activo": true,
+      "id": "be3e9ece-f674-4f85-957c-55604d02d2b0"
+    },
+    {
+      "modalidadId": "colegio",
+      "nombre": "C",
+      "activo": true,
+      "id": "9aa14422-ed5e-44cd-8ea8-0650ebcb0877"
+    },
+    {
+      "modalidadId": "colegio",
+      "nombre": "D",
+      "activo": true,
+      "id": "75d7159d-9954-4940-8e00-c0643dff266e"
+    },
+    {
+      "modalidadId": "primera",
+      "nombre": "A",
+      "activo": true,
+      "id": "de244952-2ff8-40e1-b15b-233ca5d2b402"
+    },
+    {
+      "modalidadId": "primera",
+      "nombre": "B",
+      "activo": true,
+      "id": "aa05f178-0a97-4a55-b2ba-a584f3b24a1a"
+    },
+    {
+      "modalidadId": "primera",
+      "nombre": "C",
+      "activo": true,
+      "id": "4fbfc6dd-5c97-43b2-8f89-e08fa907f6e0"
+    },
+    {
+      "modalidadId": "primera",
+      "nombre": "D",
+      "activo": true,
+      "id": "0f73c9a6-7a84-42b8-86f7-88cef4f87202"
+    },
+    {
+      "id": "23a1bcd4-47cf-4ff5-9b88-707572aa1484",
+      "modalidadId": "primera-avanzado",
+      "nombre": "A",
+      "activo": true,
+      "creadoEn": "2026-10-19T13:11:48.077Z"
+    },
+    {
+      "id": "4aa8b06e-0db1-4432-8af7-ae52854f23a9",
+      "modalidadId": "primera-avanzado",
+      "nombre": "B",
+      "activo": true,
+      "creadoEn": "2026-10-19T13:11:48.078Z"
+    },
+    {
+      "id": "71cf9f49-243f-4c36-af3e-7bdcc36cf011",
+      "modalidadId": "primera-avanzado",
+      "nombre": "C",
+      "activo": true,
+      "creadoEn": "2026-10-19T13:11:48.078Z"
+    },
+    {
+      "id": "c64220ec-e502-4b30-a053-b8b8e4be233c",
+      "modalidadId": "primera-avanzado",
+      "nombre": "D",
+      "activo": true,
+      "creadoEn": "2026-10-19T13:11:48.078Z"
+    },
+    {
+      "modalidadId": "ordinario",
+      "nombre": "A",
+      "activo": true,
+      "id": "0a68b5cf-c142-4dc5-9fd9-2d0363f44ac5"
+    },
+    {
+      "modalidadId": "ordinario",
+      "nombre": "B",
+      "activo": true,
+      "id": "314fc0ba-38f7-4b17-a159-2b16986673ed"
+    },
+    {
+      "modalidadId": "ordinario",
+      "nombre": "C",
+      "activo": true,
+      "id": "800e8495-d1e2-4720-9292-4127800d1809"
+    },
+    {
+      "modalidadId": "ordinario",
+      "nombre": "D",
+      "activo": true,
+      "id": "7823cd70-3df5-4d0a-8040-5b414c23bf75"
+    },
+    {
+      "modalidadId": "cepu",
+      "nombre": "A",
+      "activo": true,
+      "id": "2698c7dd-10cf-493d-9ff2-de09446d9d87"
+    },
+    {
+      "modalidadId": "cepu",
+      "nombre": "B",
+      "activo": true,
+      "id": "33b224d8-e89f-495e-bf13-a95e85992edc"
+    },
+    {
+      "modalidadId": "cepu",
+      "nombre": "C",
+      "activo": true,
+      "id": "012a4df7-f063-47ff-acc5-54eb849b172b"
+    },
+    {
+      "modalidadId": "cepu",
+      "nombre": "D",
+      "activo": true,
+      "id": "d191e711-541f-4c84-ae82-a909d4cad70c"
+    }
+  ],
   "instrumento": {}
 }

@@ -32,15 +32,29 @@ El script habilita las APIs necesarias, crea la base Firestore predeterminada en
 
 El contenedor incluye el catálogo depurado de `backend/data/portal-seed.json`. Para publicar cambios de cursos o docentes, vuelve a exportar el catálogo y despliega una revisión nueva.
 
+> **Importante:** el portal se compila con `VITE_BASE=/` (ya lo hace el `Dockerfile`). Si cambias ese valor, los archivos JS/CSS se pedirán bajo `/estudiante/`, responderán con el `index.html` y el navegador mostrará la página en blanco con el error `Expected a JavaScript-or-Wasm module script but the server responded with a MIME type of "text/html"`.
+
 Las respuestas que ya estén en `backend/data/db.json` permanecen intactas en tu equipo, pero no se importan automáticamente. El primer despliegue empieza con Firestore vacío y conserva las respuestas que envíen los estudiantes desde ese momento.
 
 ## Ejecución local
+
+**Con Docker:**
 
 ```bash
 docker build -t encuesta-estudiantes .
 docker run --rm -e PERSISTENCIA=local -p 8080:8080 encuesta-estudiantes
 ```
 
-Abre `http://localhost:8080`. Para enviar respuestas localmente sin Google Cloud, configura `PERSISTENCIA=local`; la base JSON local se usa por defecto fuera del contenedor.
+**Sin Docker** (simula exactamente Cloud Run: un solo proceso sirve el portal y su API):
+
+```powershell
+cd frontend-estudiante
+npm run build
+cd ..\backend
+$env:PORTAL_ESTUDIANTE_PUBLICO="true"; $env:PERSISTENCIA="local"; $env:PORT="8080"
+npm start
+```
+
+Abre `http://localhost:8080`. Comprueba `/api/salud`, y que `/api/grupos` devuelve 20 grupos. Para enviar respuestas localmente sin Google Cloud, configura `PERSISTENCIA=local`; la base JSON local se usa por defecto fuera del contenedor.
 
 Google Drive puede almacenar los archivos, pero no servir una aplicación web interactiva. Este despliegue usa Cloud Run para el portal y Firestore para conservar las respuestas.

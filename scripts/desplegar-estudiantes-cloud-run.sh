@@ -43,10 +43,25 @@ gcloud projects add-iam-policy-binding "$PROJECT_ID" \
   --role="roles/datastore.user" \
   --quiet
 
+if [ ! -s backend/data/portal-seed.json ] || ! grep -q '"docentes": \[\s*{' backend/data/portal-seed.json; then
+  echo "AVISO: backend/data/portal-seed.json no tiene docentes; los estudiantes no podrán evaluar a nadie." >&2
+  echo "       Ejecuta antes:  node scripts/exportar-catalogo-portal.mjs" >&2
+fi
+
+# El build de frontend-estudiante usa VITE_BASE durante la compilación dentro
+# de Cloud Build (Dockerfile). Sin él, los assets apuntan a /estudiante/ y el
+# portal queda en blanco al servirse en la raíz del dominio.
 gcloud run deploy "$SERVICE" \
   --source . \
   --project "$PROJECT_ID" \
   --region "$REGION" \
   --service-account "$SERVICE_ACCOUNT_EMAIL" \
   --set-env-vars="PORTAL_ESTUDIANTE_PUBLICO=true,PERSISTENCIA=firestore,GOOGLE_CLOUD_PROJECT=${PROJECT_ID}" \
+  --set-build-env-vars="VITE_BASE=/" \
+  --memory=512Mi \
   --allow-unauthenticated
+
+URL=$(gcloud run services describe "$SERVICE" --project "$PROJECT_ID" --region "$REGION" --format='value(status.url)')
+echo ""
+echo "Portal publicado en: $URL"
+echo "Comprueba la URL, /api/salud y envía una respuesta de prueba."

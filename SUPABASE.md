@@ -32,9 +32,10 @@ que ya esperan los modelos y las páginas.
    conexión. Reentra a **SQL Editor → New query** antes de reintentar.
 2. Pega el contenido **sin** las líneas que empiezan por `#` (son comentarios de
    la vista previa; el archivo real usa `--`).
-3. Si insiste, ejecuta el script por partes en este orden: tablas, luego los
-   bloques `do $$ ... $$;`. Un error en `create extension` (permiso denegado)
-   suele indicar que estás en una base que no es la del proyecto.
+3. Si insiste, ejecuta el script por partes en este orden: tablas, índices y
+   luego políticas. El esquema ya no usa bloques `do $$ ... $$;`. Un error en
+   `create extension` (permiso denegado) suele indicar que estás en una base
+   que no es la del proyecto.
 4. Confirma el resultado con `worker/supabase-verificar.sql`: deben salir 4
    tablas (`cursos`, `docentes`, `grupos`, `encuestas`) y 4 políticas.
 

@@ -63,19 +63,12 @@ create table if not exists public.encuestas (
   creado_en         timestamptz
 );
 
--- Los índices van en bloques DO para que "if not exists" funcione también en
--- Postgres 15 (en un CREATE INDEX directo produce un aviso que Supabase muestra
--- como "Backend error" en el SQL Editor).
-do $$
-begin
-  if not exists (select 1 from pg_indexes where schemaname = 'public' and indexname = 'encuestas_docente_idx') then
-    create index encuestas_docente_idx on public.encuestas ("docenteId");
-  end if;
-  if not exists (select 1 from pg_indexes where schemaname = 'public' and indexname = 'encuestas_creado_idx') then
-    create index encuestas_creado_idx on public.encuestas ("creadoEn" desc);
-  end if;
-end
-$$;
+-- Índices idempotentes. Evitamos bloques DO porque el analizador del SQL Editor
+-- puede rechazarlos antes de enviarlos a PostgreSQL.
+create index if not exists encuestas_docente_idx
+  on public.encuestas ("docenteId");
+create index if not exists encuestas_creado_idx
+  on public.encuestas ("creadoEn" desc);
 
 -- ---------- Seguridad ----------
 -- Todo el acceso pasa por el backend (service_role); el frontend y el portal
@@ -94,19 +87,19 @@ alter table public.encuestas enable row level security;
 -- Al ejecutar el script se crean estas políticas para `anon`. Si prefieres que
 -- el catálogo NO sea accesible con la clave anon, elimina las tres primeras y
 -- configura el Worker con la service_role.
-do $$
-begin
-  if not exists (select 1 from pg_policies where schemaname = 'public' and tablename = 'cursos' and policyname = 'lectura_publica') then
-    create policy "lectura_publica" on public.cursos for select to anon using (true);
-  end if;
-  if not exists (select 1 from pg_policies where schemaname = 'public' and tablename = 'docentes' and policyname = 'lectura_publica') then
-    create policy "lectura_publica" on public.docentes for select to anon using (true);
-  end if;
-  if not exists (select 1 from pg_policies where schemaname = 'public' and tablename = 'grupos' and policyname = 'lectura_publica') then
-    create policy "lectura_publica" on public.grupos for select to anon using (true);
-  end if;
-  if not exists (select 1 from pg_policies where schemaname = 'public' and tablename = 'encuestas' and policyname = 'encuestas_insert_publico') then
-    create policy "encuestas_insert_publico" on public.encuestas for insert to anon with check (true);
-  end if;
-end
-$$;
+-- DROP IF EXISTS permite volver a ejecutar esta sección sin bloques DO.
+drop policy if exists "lectura_publica" on public.cursos;
+create policy "lectura_publica" on public.cursos
+  for select to anon using (true);
+
+drop policy if exists "lectura_publica" on public.docentes;
+create policy "lectura_publica" on public.docentes
+  for select to anon using (true);
+
+drop policy if exists "lectura_publica" on public.grupos;
+create policy "lectura_publica" on public.grupos
+  for select to anon using (true);
+
+drop policy if exists "encuestas_insert_publico" on public.encuestas;
+create policy "encuestas_insert_publico" on public.encuestas
+  for insert to anon with check (true);

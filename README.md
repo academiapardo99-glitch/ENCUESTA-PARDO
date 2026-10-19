@@ -45,6 +45,9 @@ Encuesta/
 
 Los detalles (portal público, RLS, Worker) están en [SUPABASE.md](SUPABASE.md).
 
+La configuración para publicar el backend administrativo y conectarlo con el
+panel está en [DESPLIEGUE_BACKEND.md](DESPLIEGUE_BACKEND.md).
+
 La guía completa para publicar el portal de estudiantes está en [DESPLIEGUE_GOOGLE.md](DESPLIEGUE_GOOGLE.md). Google Drive puede guardar los archivos, pero no servir la aplicación interactiva como web.
 
 ### Publicar el portal de estudiantes

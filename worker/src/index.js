@@ -113,7 +113,10 @@ app.all('/api/*', (c) => c.json({ error: 'Ruta no encontrada.' }, 404));
 
 export default {
   fetch(request, env) {
-    // El frontend del portal se sirve como assets estáticos (ver wrangler.toml).
-    return app.fetch(request, env);
+    const url = new URL(request.url);
+    // Las rutas API deben llegar a Hono antes del fallback SPA de los assets.
+    if (url.pathname.startsWith('/api/')) return app.fetch(request, env);
+    // El resto de las rutas (incluida la raíz) se sirve desde el build Vite.
+    return env.ASSETS.fetch(request);
   },
 };

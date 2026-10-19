@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useAppData, nombreCurso } from '../context/AppDataContext.jsx';
 import {
   preguntas, secciones, tituloEncuesta, subtituloEncuesta, congelarDocente, nombreModalidad, nombreDocente,
@@ -8,6 +8,9 @@ import ConfirmDialog from '../components/comunes/ConfirmDialog.jsx';
 import Icon from '../components/comunes/Icon.jsx';
 import SelectorModalidadGrupo from '../components/encuestas/SelectorModalidadGrupo.jsx';
 import EscalaOpciones from '../components/encuestas/EscalaOpciones.jsx';
+import {
+  evaluadosDelGrupo, marcarEvaluado, reiniciarEvaluados, onEvaluadosChange,
+} from '../utils/evaluados.js';
 
 const ESTADO_INICIAL = { modalidadId: '', grupoId: '', docenteId: '', respuestas: {} };
 
@@ -24,6 +27,14 @@ export default function EncuestaEstudiantePage() {
   const [confirmar, setConfirmar] = useState(false);
   const [enviando, setEnviando] = useState(false);
   const [enviado, setEnviado] = useState(null);
+  // Docentes ya evaluados desde este dispositivo en el grupo elegido.
+  const [evaluados, setEvaluados] = useState(() => new Map());
+
+  useEffect(() => {
+    const actualizar = () => setEvaluados(evaluadosDelGrupo(seleccion.grupoId));
+    actualizar();
+    return onEvaluadosChange(actualizar);
+  }, [seleccion.grupoId]);
 
   const docente = docentes.find((d) => d.id === seleccion.docenteId);
   const grupo = grupos.find((g) => g.id === seleccion.grupoId);
@@ -57,6 +68,23 @@ export default function EncuestaEstudiantePage() {
     ? docentesDelGrupoActual.filter((d) => d.cursoId === filtroCurso)
     : docentesDelGrupoActual;
 
+  // Avance del estudiante en este grupo: evaluados vs. docentes por evaluar.
+  const progresoGrupo = useMemo(() => {
+    const total = docentesDelGrupoActual.length;
+    const hechos = docentesDelGrupoActual.filter((d) => evaluados.has(d.id)).length;
+    return { total, hechos, pendientes: total - hechos, completo: total > 0 && hechos === total };
+  }, [docentesDelGrupoActual, evaluados]);
+
+  // Los pendientes primero; los ya evaluados quedan al final y sin acción.
+  const docentesOrdenados = useMemo(
+    () => [...docentesLista].sort((a, b) => {
+      const ea = evaluados.has(a.id) ? 1 : 0;
+      const eb = evaluados.has(b.id) ? 1 : 0;
+      return ea - eb || nombreDocente(a).localeCompare(nombreDocente(b), 'es');
+    }),
+    [docentesLista, evaluados]
+  );
+
   function cambiarSeleccion(cambios) {
     setSeleccion((s) => {
       const nuevo = { ...s, ...cambios };
@@ -68,6 +96,7 @@ export default function EncuestaEstudiantePage() {
         nuevo.docenteId = '';
         nuevo.respuestas = {};
         setFiltroCurso('');
+        setError('');
       }
       return nuevo;
     });
@@ -88,6 +117,10 @@ export default function EncuestaEstudiantePage() {
     // El docente debe seguir perteneciendo a la modalidad y grupo elegidos.
     if (seleccion.docenteId !== docente?.id || !docentesDelGrupoActual.some((d) => d.id === seleccion.docenteId)) {
       setError('El docente seleccionado no dicta clases en este grupo. Elige otro.');
+      return;
+    }
+    if (evaluados.has(seleccion.docenteId)) {
+      setError('Ese docente ya fue evaluado desde este dispositivo. Elige a uno pendiente.');
       return;
     }
     setPaso(4);
@@ -117,10 +150,14 @@ export default function EncuestaEstudiantePage() {
         grupoNombre: grupo.nombre,
         respuestas: seleccion.respuestas,
       });
-      setEnviado({ docente: congelado, modalidad, grupo, respuestas: seleccion.respuestas });
-      setSeleccion(ESTADO_INICIAL);
-      setPaso(1);
+      // Marca al docente como evaluado en este grupo: el estudiante puede seguir
+      // con otro y ve cuáles le faltan.
+      marcarEvaluado(grupo.id, docente.id, cursoId);
+      setEnviado({ docente: congelado, modalidad, grupo, cursoId, respuestas: seleccion.respuestas });
       setConfirmar(false);
+      // El paso se fija al volver con «Evaluar a otro docente»: así la marca de
+      // este envío ya está leída cuando se muestra el paso de docentes.
+      setPaso(1);
     } catch {
       setError('No se pudo enviar la encuesta. Revisa tu conexión e inténtalo de nuevo.');
       setConfirmar(false);
@@ -144,9 +181,19 @@ export default function EncuestaEstudiantePage() {
             <span className="chip"><Icon name="estrella" size={16} /> Promedio {promedio.toFixed(2)} / 10</span>
           </div>
           <p className="subtitulo">Tu encuesta es anónima y no permite identificarte.</p>
-          <button className="btn btn-primario" onClick={() => setEnviado(null)}>
-            <Icon name="encuesta" size={17} /> Responder otra encuesta
+          <button
+            className="btn btn-primario"
+            onClick={() => {
+              setEnviado(null);
+              // Vuelve directo al paso de docente del mismo grupo.
+              setPaso(3);
+            }}
+          >
+            <Icon name="encuesta" size={17} /> Evaluar a otro docente
           </button>
+          <p className="subtitulo exito-avance">
+            Puedes seguir evaluando a los docentes que te faltan de {enviado.modalidad?.nombre} · Grupo {enviado.grupo?.nombre}.
+          </p>
         </div>
       </section>
     );
@@ -212,6 +259,23 @@ export default function EncuestaEstudiantePage() {
           </div>
 
           <form onSubmit={irAPreguntas} className="form" noValidate>
+            {!filtroCurso && progresoGrupo.total > 0 && (
+              <div className={`avance-grupo ${progresoGrupo.completo ? 'avance-completo' : ''}`} aria-live="polite">
+                <div className="avance-cabecera">
+                  <strong>
+                    <Icon name={progresoGrupo.completo ? 'verificado' : 'reloj'} size={16} />{' '}
+                    {progresoGrupo.completo
+                      ? '¡Completaste todos los docentes de tu grupo!'
+                      : `Te falta evaluar ${progresoGrupo.pendientes} de ${progresoGrupo.total} docentes`}
+                  </strong>
+                  <span>{progresoGrupo.hechos}/{progresoGrupo.total} evaluados</span>
+                </div>
+                <div className="progreso-fondo" role="progressbar" aria-valuemin={0} aria-valuemax={progresoGrupo.total} aria-valuenow={progresoGrupo.hechos}>
+                  <div className="progreso-barra avance-barra" style={{ width: `${(progresoGrupo.hechos / progresoGrupo.total) * 100}%` }} />
+                </div>
+              </div>
+            )}
+
             {cursosDelGrupo.length > 1 && (
               <label className="campo">
                 <span>Filtrar por curso (opcional)</span>
@@ -231,8 +295,9 @@ export default function EncuestaEstudiantePage() {
               <p className="mensaje-vacio">No hay docentes de ese curso en tu grupo.</p>
             ) : (
               <div className="grid-docentes" role="radiogroup" aria-label="Docente">
-                {docentesLista.map((d) => {
+                {docentesOrdenados.map((d) => {
                   const elegido = seleccion.docenteId === d.id;
+                  const hecho = evaluados.get(d.id);
                   const iniciales = nombreDocente(d).split(' ').map((p) => p[0] || '').slice(0, 2).join('').toUpperCase();
                   return (
                     <button
@@ -240,18 +305,31 @@ export default function EncuestaEstudiantePage() {
                       key={d.id}
                       role="radio"
                       aria-checked={elegido}
-                      className={`docente-card ${elegido ? 'docente-card-activa' : ''}`}
-                      onClick={() => cambiarSeleccion({ docenteId: d.id })}
+                      aria-disabled={Boolean(hecho)}
+                      className={`docente-card ${elegido && !hecho ? 'docente-card-activa' : ''} ${hecho ? 'docente-card-hecha' : ''}`}
+                      onClick={() => {
+                        // Ya evaluado: no se vuelve a seleccionar, solo se informa.
+                        if (hecho) {
+                          setError(`${nombreDocente(d)} ya fue evaluado desde este dispositivo. Solo te faltan los docentes sin marca.`);
+                          return;
+                        }
+                        cambiarSeleccion({ docenteId: d.id });
+                      }}
                     >
                       <span className="avatar">{iniciales}</span>
                       <span className="docente-info">
                         <strong>{nombreDocente(d)}</strong>
                         <small>{nombreCurso(cursos, d.cursoId)}</small>
                         <small className="docente-meta">
-                          <Icon name="universidad" size={13} /> Docente activo
+                          {hecho ? (
+                            <><Icon name="verificado" size={13} color="#2e7d32" /> Encuesta enviada</>
+                          ) : (
+                            <><Icon name="reloj" size={13} /> Por evaluar</>
+                          )}
                         </small>
                       </span>
-                      {elegido && <Icon name="check" size={20} color="#1e4e8c" />}
+                      {hecho && <span className="docente-estado-hecha"><Icon name="check" size={13} /> Hecha</span>}
+                      {elegido && !hecho && <Icon name="check" size={20} color="#1e4e8c" />}
                     </button>
                   );
                 })}
@@ -262,10 +340,28 @@ export default function EncuestaEstudiantePage() {
 
             <div className="modal-acciones">
               <button type="button" className="btn btn-secundario" onClick={() => setPaso(1)}>Volver</button>
-              <button type="submit" className="btn btn-primario" disabled={!seleccion.docenteId}>
+              <button
+                type="submit"
+                className="btn btn-primario"
+                disabled={!seleccion.docenteId || evaluados.has(seleccion.docenteId)}
+              >
                 Continuar <Icon name="check" size={16} />
               </button>
             </div>
+
+            {/* Utilidad del dispositivo: el avance es local, no una cuenta. */}
+            {progresoGrupo.hechos > 0 && (
+              <button
+                type="button"
+                className="btn-enlace-avance"
+                onClick={() => {
+                  reiniciarEvaluados();
+                  setError('');
+                }}
+              >
+                ¿Otro estudiante usará este equipo? Reiniciar mis marcas
+              </button>
+            )}
           </form>
         </div>
       )}

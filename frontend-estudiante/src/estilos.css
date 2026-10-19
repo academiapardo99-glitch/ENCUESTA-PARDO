@@ -724,6 +724,38 @@ h4 {
 .docente-info small { font-size: 12px; color: #7a8595; }
 .docente-meta { display: flex; align-items: center; gap: 4px; }
 
+/* Docente ya evaluado desde este dispositivo */
+.docente-card-hecha {
+  background: #f3faf3; border-color: #9fd3a5; color: #4d6b52; cursor: default;
+}
+.docente-card-hecha:hover { border-color: #9fd3a5; }
+.docente-card-hecha .avatar { background: #6fae77; }
+.docente-card-hecha strong { color: #2e5c36; }
+.docente-estado-hecha {
+  display: inline-flex; align-items: center; gap: 4px; flex-shrink: 0;
+  font-size: 11px; font-weight: 700; color: #2e7d32;
+  background: #e3f4e5; border: 1px solid #b7dfbb; border-radius: 999px; padding: 3px 8px;
+}
+
+/* Avance del estudiante en el grupo */
+.avance-grupo {
+  display: flex; flex-direction: column; gap: 6px; margin-bottom: 4px;
+  background: #f4f8ff; border: 1px solid #cfe0f5; border-radius: 12px; padding: 12px 14px;
+}
+.avance-grupo.avance-completo { background: #eef9f0; border-color: #b7dfbb; }
+.avance-cabecera { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; font-size: 13px; }
+.avance-cabecera strong { display: inline-flex; align-items: center; gap: 6px; color: var(--azul-oscuro); }
+.avance-completo .avance-cabecera strong { color: #2e7d32; }
+.avance-cabecera span { color: #6b7686; font-size: 12px; }
+.avance-barra { background: linear-gradient(90deg, #6fae77, #2e7d32); }
+
+.btn-enlace-avance {
+  align-self: flex-start; background: none; border: 0; padding: 2px 0; cursor: pointer;
+  font-family: inherit; font-size: 12px; color: #7a8595; text-decoration: underline;
+}
+.btn-enlace-avance:hover { color: var(--azul); }
+.exito-avance { margin-top: 4px; }
+
 /* Progreso */
 .progreso { display: flex; flex-direction: column; gap: 6px; font-size: 13px; color: #6b7686; }
 .progreso-fondo { height: 8px; background: var(--gris-fondo); border-radius: 999px; overflow: hidden; border: 1px solid var(--gris-borde); }

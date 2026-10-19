@@ -1,10 +1,17 @@
-// ===== Almacén de datos en archivo JSON =====
-// Persistencia simple y sin dependencias nativas: cada colección se guarda
-// como un arreglo en `data/db.json`. Escritura atómica (tmp + rename) para
-// evitar corrupción si el proceso se interrumpe.
+// ===== Almacén de datos =====
+// Selecciona la persistencia según PERSISTENCIA:
+//   - (por defecto) archivo JSON local en `data/db.json`, escritura atómica
+//     (tmp + rename) para evitar corrupción si el proceso se interrumpe.
+//   - 'supabase': tablas de Supabase mediante supabase.js (ver SUPABASE.md).
+// La misma interfaz (`db`, `leer`, `escribir`) se usa en ambos casos.
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import * as supabase from './supabase.js';
+import { sincronizarGrupos } from './catalogo.js';
+
+// ---------- Almacén Supabase ----------
+const USAR_SUPABASE = (process.env.PERSISTENCIA || '').toLowerCase() === 'supabase';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const DATA_DIR = path.join(__dirname, '..', 'data');
@@ -54,31 +61,74 @@ function leerDisco() {
   }
 }
 
-export function db() {
-  if (!cache) cache = leerDisco();
-  return cache;
-}
-
-export function guardar() {
-  if (!cache) return;
+function guardar() {
+  if (!cache || USAR_SUPABASE) return;
   asegurarDirectorio();
   const tmp = `${DB_FILE}.tmp`;
   fs.writeFileSync(tmp, JSON.stringify(cache, null, 2), 'utf8');
   fs.renameSync(tmp, DB_FILE);
 }
 
-export function leer(coleccion) {
-  return db()[coleccion];
-}
-
-export function escribir(coleccion, items) {
-  db()[coleccion] = items;
-  guardar();
-  return items;
-}
-
-export function nuevoId() {
+function nuevoId() {
   return globalThis.crypto?.randomUUID?.() ?? `id-${Date.now()}-${Math.random().toString(16).slice(2)}`;
 }
 
-export { DB_FILE };
+// Carga inicial desde Supabase. Fallar aquí es preferible a arrancar con la
+// base vacía y sobrescribirla en el primer guardado.
+export async function inicializarDb() {
+  if (!USAR_SUPABASE) {
+    cache = leerDisco();
+    return cache;
+  }
+  // Una sola copia en memoria, compartida con supabase.js: los modelos leen
+  // `db()` y escriben a través de `leer()`/`escribir()` de este módulo.
+  cache = await supabase.refrescarSupabase();
+  console.log('Persistencia: Supabase');
+  return cache;
+}
+
+// ---------- Interfaz común ----------
+export function db() {
+  if (!cache) {
+    if (USAR_SUPABASE) {
+      throw new Error('Base de datos no inicializada: el servidor debe llamar a inicializarDb().');
+    }
+    cache = leerDisco();
+  }
+  return cache;
+}
+
+// "grupos" se devuelve normalizado. Los grupos que aún no están en la base
+// (arranque con la tabla vacía) reciben un id estable derivado de modalidad +
+// nombre, para que el sembrado no cambie de ids en cada arranque.
+export function leer(coleccion) {
+  if (!USAR_SUPABASE) return db()[coleccion];
+  const filas = supabase.leer(coleccion);
+  return coleccion === 'grupos' ? conIdsEstables(filas) : filas;
+}
+
+function conIdsEstables(grupos) {
+  const existentes = new Set(grupos.map((g) => g.id).filter(Boolean));
+  return sincronizarGrupos(grupos).map((g) =>
+    existentes.has(g.id) ? g : { ...g, id: `g-${g.modalidadId}-${g.nombre.toLowerCase()}` }
+  );
+}
+
+/**
+ * Sustituye una colección. `items` puede ser el arreglo nuevo o una función
+ * `(previos) => nuevoArreglo`; la función se evalúa sobre el estado real, dentro
+ * de la cola de escritura, para no perder cambios de peticiones concurrentes.
+ * `filas()` adapta los objetos al esquema relacional (p. ej. `creadoEn` →
+ * `creado_en` en la tabla de encuestas).
+ */
+export async function escribir(coleccion, items, filas) {
+  if (!USAR_SUPABASE) {
+    const nuevos = typeof items === 'function' ? items(db()[coleccion]) : items;
+    db()[coleccion] = nuevos;
+    guardar();
+    return nuevos;
+  }
+  return supabase.escribir(coleccion, items, filas);
+}
+
+export { DB_FILE, USAR_SUPABASE, nuevoId };

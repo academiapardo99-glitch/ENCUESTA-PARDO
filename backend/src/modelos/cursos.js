@@ -1,7 +1,8 @@
 // ===== Cursos =====
 // Un curso se compone únicamente de su nombre y de los grupos a los que
 // pertenece (p. ej. el Grupo A de Colegio y el Grupo B de Ordinario).
-import { db, escribir, nuevoId } from '../db.js';
+import { escribir, leer, nuevoId } from '../db.js';
+import { listarDocentes } from './docentes.js';
 
 export function gruposDeCurso(curso) {
   if (!curso) return [];
@@ -22,52 +23,61 @@ function normalizar(datos, existente = {}) {
 }
 
 export function listarCursos() {
-  return db().cursos.map((c) => normalizar({}, c));
+  return leer('cursos').map((c) => normalizar({}, c));
 }
 
-export function crearCurso(datos) {
-  const cursos = db().cursos;
+export async function crearCurso(datos) {
   const nuevo = normalizar(datos);
-  escribir('cursos', [...cursos, nuevo]);
+  await escribir('cursos', (previos) => [...previos, nuevo]);
   return nuevo;
 }
 
-export function actualizarCurso(id, cambios) {
-  const cursos = db().cursos;
-  const idx = cursos.findIndex((c) => c.id === id);
-  if (idx === -1) return null;
-  const actualizado = normalizar(cambios, cursos[idx]);
-  cursos[idx] = actualizado;
-  escribir('cursos', cursos);
+export async function actualizarCurso(id, cambios) {
+  let actualizado = null;
+  await escribir('cursos', (previos) => {
+    const idx = previos.findIndex((c) => c.id === id);
+    if (idx === -1) return previos;
+    actualizado = normalizar(cambios, previos[idx]);
+    return previos.map((c, i) => (i === idx ? actualizado : c));
+  });
   return actualizado;
 }
 
-export function eliminarCurso(id) {
-  const cursos = db().cursos;
-  const idx = cursos.findIndex((c) => c.id === id);
-  if (idx === -1) return null;
+export async function eliminarCurso(id) {
+  // Se comprueba con el catálogo normalizado (los registros guardados pueden no
+  // tener id aún, pero listarCursos() siempre lo asigna).
+  if (!listarCursos().some((c) => c.id === id)) return null;
 
-  // Un docente no puede quedar apuntando a un curso inexistente (se vería "—"
-  // en la tabla). Se reasignan a otro curso de los mismos grupos si existe; si
-  // no, se desactivan para conservar su historial.
-  const curso = cursos[idx];
-  const grupos = new Set(gruposDeCurso(curso));
-  const sustituto = cursos.find(
-    (c) => c.id !== id && gruposDeCurso(c).some((g) => grupos.has(g))
-  );
+  let resultado = null;
+  let trasCurso = null;
+  await escribir('cursos', (previos) => {
+    const idx = previos.findIndex((c) => c.id === id);
+    if (idx === -1) return previos;
 
-  escribir('cursos', cursos.filter((c) => c.id !== id));
+    // Un docente no puede quedar apuntando a un curso inexistente (se vería "—"
+    // en la tabla). Se reasignan a otro curso de los mismos grupos si existe; si
+    // no, se desactivan para conservar su historial.
+    const curso = previos[idx];
+    const grupos = new Set(gruposDeCurso(curso));
+    const sustituto = previos.find(
+      (c) => c.id !== id && gruposDeCurso(c).some((g) => grupos.has(g))
+    );
 
-  const docentes = db().docentes;
-  const afectados = docentes.filter((d) => d.cursoId === id);
-  if (afectados.length) {
-    escribir('docentes', docentes.map((d) => {
-      if (d.cursoId !== id) return d;
-      return sustituto
-        ? { ...d, cursoId: sustituto.id }
-        : { ...d, cursoId: '', estado: 'inactivo' };
-    }));
-  }
+    const afectados = listarDocentes().filter((d) => d.cursoId === id);
+    if (afectados.length) {
+      // El movimiento de docentes se hace después de este guardado.
+      trasCurso = (lista) => lista.map((d) => {
+        if (d.cursoId !== id) return d;
+        return sustituto
+          ? { ...d, cursoId: sustituto.id }
+          : { ...d, cursoId: '', estado: 'inactivo' };
+      });
+    }
 
-  return { curso, docentesAfectados: afectados.length, reasignadosA: sustituto?.nombre || null };
+    resultado = { curso, docentesAfectados: afectados.length, reasignadosA: sustituto?.nombre || null };
+    return previos.filter((c) => c.id !== id);
+  });
+
+  if (trasCurso) await escribir('docentes', trasCurso);
+  return resultado;
 }

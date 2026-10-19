@@ -1,5 +1,5 @@
 // ===== Docentes =====
-import { db, escribir, nuevoId } from '../db.js';
+import { db, escribir, leer, nuevoId } from '../db.js';
 
 // El modelo actual solo usa: nombre, cursoId y modalidadIds (modalidades que
 // enseña). Se conservan los campos antiguos (nombres, apellidos, correo,
@@ -30,35 +30,39 @@ function normalizar(datos, existente = {}) {
 }
 
 export function listarDocentes() {
-  return db().docentes.map((d) => normalizar({}, d));
+  return leer('docentes').map((d) => normalizar({}, d));
 }
 
-export function crearDocente(datos) {
-  const docentes = db().docentes;
+// El nombre del parámetro es `previos`: dentro del callback, `docentes` se
+// refiere a la colección ya actualizada por escrituras concurrentes.
+export async function crearDocente(datos) {
   const nuevo = normalizar(datos);
-  // Genera un código correlativo si el modelo legado lo espera.
-  const numero = docentes.length + 1;
-  nuevo.codigo = nuevo.codigo || `DOC-${String(numero).padStart(3, '0')}`;
-  escribir('docentes', [...docentes, nuevo]);
+  await escribir('docentes', (previos) => {
+    // Genera un código correlativo si el modelo legado lo espera.
+    nuevo.codigo = nuevo.codigo || `DOC-${String(previos.length + 1).padStart(3, '0')}`;
+    return [...previos, nuevo];
+  });
   return nuevo;
 }
 
-export function actualizarDocente(id, cambios) {
-  const docentes = db().docentes;
-  const idx = docentes.findIndex((d) => d.id === id);
-  if (idx === -1) return null;
-  const actualizado = normalizar(cambios, docentes[idx]);
-  docentes[idx] = actualizado;
-  escribir('docentes', docentes);
+export async function actualizarDocente(id, cambios) {
+  let actualizado = null;
+  await escribir('docentes', (previos) => {
+    const idx = previos.findIndex((d) => d.id === id);
+    if (idx === -1) return previos;
+    actualizado = normalizar(cambios, previos[idx]);
+    return previos.map((d, i) => (i === idx ? actualizado : d));
+  });
   return actualizado;
 }
 
-export function eliminarDocente(id) {
-  const docentes = db().docentes;
-  const restantes = docentes.filter((d) => d.id !== id);
-  // OJO: `escribir` reasigna db().docentes al arreglo nuevo, así que hay que
-  // comparar contra el arreglo GUARDADO. Comparar `docentes` (la referencia
-  // antigua) daba siempre false y el DELETE respondía 404 aunque borrase.
-  escribir('docentes', restantes);
-  return restantes.length !== docentes.length;
+export async function eliminarDocente(id) {
+  let eliminado = false;
+  // OJO: Comparar la referencia antigua daba siempre false y el DELETE respondía
+  // 404 aunque borrase; aquí se compara dentro del callback, sobre el estado real.
+  await escribir('docentes', (previos) => {
+    eliminado = previos.some((d) => d.id === id);
+    return previos.filter((d) => d.id !== id);
+  });
+  return eliminado;
 }

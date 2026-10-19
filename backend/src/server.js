@@ -14,6 +14,7 @@ import { listarCursos } from './modelos/cursos.js';
 import { listarGrupos } from './modelos/grupos.js';
 import { obtenerInstrumento } from './modelos/instrumento.js';
 import { sembrarGrupos } from './modelos/grupos.js';
+import { inicializarDb } from './db.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
@@ -57,8 +58,12 @@ if (PORTAL_ESTUDIANTE_PUBLICO) {
       .filter((c) => c.activo !== false)
       .map(({ id, nombre, grupoIds, activo }) => ({ id, nombre, grupoIds, activo })));
   });
-  app.get('/api/grupos', (req, res) => {
-    res.json(listarGrupos().map(({ id, modalidadId, nombre, activo }) => ({ id, modalidadId, nombre, activo })));
+  app.get('/api/grupos', async (req, res, next) => {
+    try {
+      res.json((await listarGrupos()).map(({ id, modalidadId, nombre, activo }) => ({ id, modalidadId, nombre, activo })));
+    } catch (error) {
+      next(error);
+    }
   });
   app.get('/api/instrumento', (req, res) => res.json(obtenerInstrumento()));
   app.use('/api/encuestas', (req, res, next) => {
@@ -105,8 +110,15 @@ app.use((err, req, res, next) => {
   res.status(500).json({ error: 'Error interno del servidor.' });
 });
 
-// Siembra de grupos al arrancar (idempotente: siempre 20 = 5 modalidades × A–D).
-sembrarGrupos();
+// Arranque: carga el almacén (JSON local o Supabase) y siembra los grupos
+// (idempotente: siempre 20 = 5 modalidades × A–D).
+try {
+  await inicializarDb();
+  await sembrarGrupos();
+} catch (error) {
+  console.error('\n[ERROR] No se pudo inicializar la base de datos:', error.message, '\n');
+  process.exit(1);
+}
 
 const servidor = app.listen(PORT, () => {
   console.log(`API de encuestas escuchando en http://localhost:${PORT}`);

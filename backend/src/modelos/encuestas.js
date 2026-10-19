@@ -2,19 +2,37 @@
 // Cada encuesta congela los nombres de docente/curso/modalidad/grupo en el
 // momento de responder, de modo que el historial no cambia si luego se edita
 // el catálogo.
-import { db, escribir, nuevoId } from '../db.js';
+import { db, escribir, leer, nuevoId, USAR_SUPABASE } from '../db.js';
 import { MODALIDADES } from '../catalogo.js';
 import { guardarEncuestaFirestore } from '../firestore.js';
+import { listarGrupos } from './grupos.js';
+import { listarDocentes } from './docentes.js';
+import { listarCursos } from './cursos.js';
+
+// En Supabase la tabla `encuestas` usa `creado_en` como clave primaria y
+// respuestas en JSONB; en local se conserva el objeto tal cual.
+function filaEncuesta(e) {
+  if (!USAR_SUPABASE) return e;
+  const { creadoEn, ...resto } = e;
+  return { ...resto, creado_en: creadoEn };
+}
+
+function desdeFilaEncuesta(fila) {
+  const { creado_en, ...resto } = fila;
+  return { ...resto, creadoEn: creado_en };
+}
 
 export function listarEncuestas() {
-  return db().encuestas.map((e) => ({ ...e }));
+  const encuestas = leer('encuestas');
+  return encuestas
+    .map((e) => ({ ...(e.creado_en ? desdeFilaEncuesta(e) : e) }))
+    .sort((a, b) => String(b.creadoEn || '').localeCompare(String(a.creadoEn || '')));
 }
 
 export async function crearEncuesta(payload) {
-  const encuestas = db().encuestas;
-  const docente = db().docentes.find((d) => d.id === payload.docenteId);
-  const curso = db().cursos.find((c) => c.id === payload.cursoId);
-  const grupo = db().grupos.find((g) => g.id === payload.grupoId);
+  const docente = listarDocentes().find((d) => d.id === payload.docenteId);
+  const curso = listarCursos().find((c) => c.id === payload.cursoId);
+  const grupo = listarGrupos().find((g) => g.id === payload.grupoId);
   const modalidad = MODALIDADES.find((m) => m.id === payload.modalidadId);
 
   const encuesta = {
@@ -34,14 +52,20 @@ export async function crearEncuesta(payload) {
   if (process.env.PERSISTENCIA === 'firestore') {
     await guardarEncuestaFirestore(encuesta);
   } else {
-    escribir('encuestas', [...encuestas, encuesta]);
+    await escribir('encuestas', (previas) => [...previas, encuesta], (items) => items.map(filaEncuesta));
   }
   return encuesta;
 }
 
-export function eliminarEncuesta(id) {
-  const encuestas = db().encuestas;
-  const antes = encuestas.length;
-  escribir('encuestas', encuestas.filter((e) => e.id !== id));
-  return encuestas.length !== antes;
+export async function eliminarEncuesta(id) {
+  let eliminada = false;
+  await escribir(
+    'encuestas',
+    (previas) => {
+      eliminada = previas.some((e) => e.id === id);
+      return previas.filter((e) => e.id !== id);
+    },
+    (items) => items.map(filaEncuesta)
+  );
+  return eliminada;
 }

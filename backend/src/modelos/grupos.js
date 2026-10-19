@@ -1,28 +1,27 @@
 // ===== Grupos (modalidad × grupo) =====
-import { db, escribir } from '../db.js';
+import { db, escribir, leer } from '../db.js';
 import { gruposPorDefecto, sincronizarGrupos } from '../catalogo.js';
 
-// Devuelve los 20 grupos canónicos, sincronizando el archivo si hace falta.
+// Devuelve los 20 grupos canónicos. Es síncrona y no escribe: se llama en cada
+// request y no debe disparar guardados (en Supabase serían peticiones extra).
 export function listarGrupos() {
-  const actuales = db().grupos;
-  const sincronizados = sincronizarGrupos(actuales);
-  const cambio =
-    sincronizados.length !== actuales.length ||
-    sincronizados.some((g, i) => g.id !== actuales[i]?.id || g.activo !== actuales[i]?.activo);
-  if (cambio) escribir('grupos', sincronizados);
-  return sincronizados;
+  return sincronizarGrupos(leer('grupos'));
 }
 
-export function sembrarGrupos() {
-  escribir('grupos', sincronizarGrupos(db().grupos.length ? db().grupos : gruposPorDefecto()));
-  return db().grupos;
+export async function sembrarGrupos() {
+  await escribir('grupos', (previos) =>
+    sincronizarGrupos(previos.length ? previos : gruposPorDefecto())
+  );
+  return listarGrupos();
 }
 
-export function actualizarGrupo(id, cambios) {
-  const grupos = listarGrupos();
-  const idx = grupos.findIndex((g) => g.id === id);
-  if (idx === -1) return null;
-  grupos[idx] = { ...grupos[idx], ...cambios };
-  escribir('grupos', grupos);
-  return grupos[idx];
+export async function actualizarGrupo(id, cambios) {
+  let actualizado = null;
+  await escribir('grupos', (previos) => {
+    const idx = previos.findIndex((g) => g.id === id);
+    if (idx === -1) return previos;
+    actualizado = { ...previos[idx], ...cambios };
+    return previos.map((g, i) => (i === idx ? actualizado : g));
+  });
+  return actualizado;
 }

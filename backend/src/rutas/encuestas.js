@@ -19,13 +19,16 @@ router.post('/', async (req, res, next) => {
   if (!cursoId) return res.status(400).json({ error: 'Falta el curso.' });
   if (!grupoId) return res.status(400).json({ error: 'Falta el grupo.' });
   // Los ids deben existir realmente: evita valores como "undefined".
-  if (!listarDocentes().some((d) => d.id === docenteId)) {
+  const docentes = listarDocentes();
+  const cursos = listarCursos();
+  const grupos = listarGrupos();
+  if (!docentes.some((d) => d.id === docenteId)) {
     return res.status(400).json({ error: 'El docente indicado no existe.' });
   }
-  if (!listarCursos().some((c) => c.id === cursoId)) {
+  if (!cursos.some((c) => c.id === cursoId)) {
     return res.status(400).json({ error: 'El curso indicado no existe.' });
   }
-  if (!listarGrupos().some((g) => g.id === grupoId)) {
+  if (!grupos.some((g) => g.id === grupoId)) {
     return res.status(400).json({ error: 'El grupo indicado no existe.' });
   }
   if (!respuestas || typeof respuestas !== 'object' || Array.isArray(respuestas) || Object.keys(respuestas).length === 0) {

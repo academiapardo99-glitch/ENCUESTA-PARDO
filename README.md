@@ -6,8 +6,9 @@ Monorepo fullstack con frontend (React + Vite) y backend (Node.js + Express).
 Encuesta/
 ├── frontend/   # SPA en React + Vite
 ├── frontend-estudiante/ # Encuesta pública para estudiantes
-├── backend/    # API REST + persistencia JSON local / Firestore en Cloud Run
-└── scripts/    # Exportación del catálogo y despliegue en Cloud Run
+├── backend/    # API REST + persistencia JSON local / Supabase
+├── worker/     # API pública (Cloudflare Workers) + esquema SQL de Supabase
+└── scripts/    # Exportación del catálogo, despliegue y prueba de humo de la API
 ```
 
 ## Arquitectura
@@ -20,16 +21,29 @@ Encuesta/
                                               │
                              ┌────────────────┴───────────────┐
                              ▼                                ▼
-                    data/db.json local               Firestore en Cloud Run
+                    data/db.json local               Supabase (PostgreSQL)
+                                                     PERSISTENCIA=supabase
 ```
 
 - **Frontend**: React 18 + Vite. Toda la app consume datos mediante
   `AppDataContext`, que a su vez usa la capa de servicios
   (`src/services/dataService.js`) sobre el cliente HTTP (`src/api/cliente.js`).
-- **Backend**: Express con rutas REST por colección. En desarrollo usa archivo
-  JSON; en el portal público puede guardar respuestas en Firestore.
+- **Backend**: Express con rutas REST por colección. Sin `PERSISTENCIA` usa el
+  archivo JSON; con `PERSISTENCIA=supabase` guarda todo en Supabase. El frontend
+  nunca habla con Supabase: solo con la API.
 
 ## Puesta en marcha
+
+### Conectar con Supabase
+
+1. Ejecuta [`worker/supabase-schema.sql`](worker/supabase-schema.sql) en el SQL
+   Editor de Supabase para crear `cursos`, `docentes`, `grupos` y `encuestas`.
+2. Copia `backend/.env.example` a `backend/.env` y completa `SUPABASE_URL` y
+   `SUPABASE_SERVICE_ROLE_KEY` (clave secreta, solo servidor).
+3. `npm run dev` en `backend/` carga el `.env` y muestra `Persistencia: Supabase`.
+4. Verifica con `node scripts/smoke-test-api.mjs http://localhost:4000`.
+
+Los detalles (portal público, RLS, Worker) están en [SUPABASE.md](SUPABASE.md).
 
 La guía completa para publicar el portal de estudiantes está en [DESPLIEGUE_GOOGLE.md](DESPLIEGUE_GOOGLE.md). Google Drive puede guardar los archivos, pero no servir la aplicación interactiva como web.
 

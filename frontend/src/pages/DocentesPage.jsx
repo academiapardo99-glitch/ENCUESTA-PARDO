@@ -119,8 +119,14 @@ export default function DocentesPage() {
           mensaje={`¿Eliminar al docente ${nombreDocente(confirmar)}? Esta acción no se puede deshacer.`}
           onCancelar={() => setConfirmar(null)}
           onConfirmar={async () => {
-            await eliminarDocente(confirmar.id);
-            setConfirmar(null);
+            try {
+              await eliminarDocente(confirmar.id);
+              setConfirmar(null);
+            } catch (err) {
+              // Antes el error se perdía y el diálogo quedaba abierto sin avisar.
+              notificar('error', err.message || 'No se pudo eliminar el docente.');
+              setConfirmar(null);
+            }
           }}
         />
       )}

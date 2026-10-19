@@ -28,7 +28,8 @@ router.put('/:id', (req, res) => {
 router.delete('/:id', (req, res) => {
   const ok = eliminarDocente(req.params.id);
   if (!ok) return res.status(404).json({ error: 'Docente no encontrado.' });
-  res.status(204).end();
+  // 200 en lugar de 204: el cliente debe leer una confirmación explícita.
+  res.json({ ok: true, id: req.params.id });
 });
 
 export default router;

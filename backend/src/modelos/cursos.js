@@ -44,7 +44,30 @@ export function actualizarCurso(id, cambios) {
 
 export function eliminarCurso(id) {
   const cursos = db().cursos;
-  const antes = cursos.length;
+  const idx = cursos.findIndex((c) => c.id === id);
+  if (idx === -1) return null;
+
+  // Un docente no puede quedar apuntando a un curso inexistente (se vería "—"
+  // en la tabla). Se reasignan a otro curso de los mismos grupos si existe; si
+  // no, se desactivan para conservar su historial.
+  const curso = cursos[idx];
+  const grupos = new Set(gruposDeCurso(curso));
+  const sustituto = cursos.find(
+    (c) => c.id !== id && gruposDeCurso(c).some((g) => grupos.has(g))
+  );
+
   escribir('cursos', cursos.filter((c) => c.id !== id));
-  return cursos.length !== antes;
+
+  const docentes = db().docentes;
+  const afectados = docentes.filter((d) => d.cursoId === id);
+  if (afectados.length) {
+    escribir('docentes', docentes.map((d) => {
+      if (d.cursoId !== id) return d;
+      return sustituto
+        ? { ...d, cursoId: sustituto.id }
+        : { ...d, cursoId: '', estado: 'inactivo' };
+    }));
+  }
+
+  return { curso, docentesAfectados: afectados.length, reasignadosA: sustituto?.nombre || null };
 }

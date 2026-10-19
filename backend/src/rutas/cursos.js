@@ -25,9 +25,10 @@ router.put('/:id', (req, res) => {
 });
 
 router.delete('/:id', (req, res) => {
-  const ok = eliminarCurso(req.params.id);
-  if (!ok) return res.status(404).json({ error: 'Curso no encontrado.' });
-  res.status(204).end();
+  const resultado = eliminarCurso(req.params.id);
+  if (!resultado) return res.status(404).json({ error: 'Curso no encontrado.' });
+  // 200 en lugar de 204 por el mismo motivo que el DELETE de docentes.
+  res.json({ ok: true, id: req.params.id, ...resultado });
 });
 
 export default router;

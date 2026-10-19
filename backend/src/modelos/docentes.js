@@ -55,7 +55,10 @@ export function actualizarDocente(id, cambios) {
 
 export function eliminarDocente(id) {
   const docentes = db().docentes;
-  const antes = docentes.length;
-  escribir('docentes', docentes.filter((d) => d.id !== id));
-  return docentes.length !== antes;
+  const restantes = docentes.filter((d) => d.id !== id);
+  // OJO: `escribir` reasigna db().docentes al arreglo nuevo, así que hay que
+  // comparar contra el arreglo GUARDADO. Comparar `docentes` (la referencia
+  // antigua) daba siempre false y el DELETE respondía 404 aunque borrase.
+  escribir('docentes', restantes);
+  return restantes.length !== docentes.length;
 }

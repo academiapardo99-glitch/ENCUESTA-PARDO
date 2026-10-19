@@ -1,0 +1,17 @@
+
+/* ===== Formulario de docentes: modalidades que enseña ===== */
+.grupo-check { border: none; padding: 0; margin: 0; }
+.grupo-check legend { font-weight: 600; margin-bottom: .5rem; color: var(--texto, #1f2937); }
+.grid-check { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: .5rem; }
+.check-card {
+  position: relative; display: flex; align-items: center; gap: .55rem;
+  padding: .65rem .8rem; border: 1px solid #d8e0ec; border-radius: 10px;
+  background: #fff; cursor: pointer; font-size: .9rem; transition: all .15s ease;
+}
+.check-card:hover { border-color: #a8bcd8; background: #f7faff; }
+.check-card-activa { border-color: #1e4e8c; background: #eef4ff; box-shadow: 0 0 0 1px #1e4e8c inset; }
+.check-card input[type="checkbox"] { position: absolute; opacity: 0; pointer-events: none; }
+.check-marca { margin-left: auto; }
+.chips-inline { display: flex; flex-wrap: wrap; gap: .3rem; }
+.chip-mini { font-size: .74rem; padding: .18rem .45rem; display: inline-flex; align-items: center; gap: .25rem; }
+.docente-mods { color: #6b7c93; }

@@ -1,0 +1,104 @@
+{
+  "cursos": [],
+  "docentes": [],
+  "encuestas": [],
+  "grupos": [
+    {
+      "modalidadId": "colegio",
+      "nombre": "A",
+      "activo": true,
+      "id": "ac64a489-708f-4c11-a796-f8d4d557c3d8"
+    },
+    {
+      "modalidadId": "colegio",
+      "nombre": "B",
+      "activo": true,
+      "id": "be3e9ece-f674-4f85-957c-55604d02d2b0"
+    },
+    {
+      "modalidadId": "colegio",
+      "nombre": "C",
+      "activo": true,
+      "id": "9aa14422-ed5e-44cd-8ea8-0650ebcb0877"
+    },
+    {
+      "modalidadId": "colegio",
+      "nombre": "D",
+      "activo": true,
+      "id": "75d7159d-9954-4940-8e00-c0643dff266e"
+    },
+    {
+      "modalidadId": "primera",
+      "nombre": "A",
+      "activo": true,
+      "id": "de244952-2ff8-40e1-b15b-233ca5d2b402"
+    },
+    {
+      "modalidadId": "primera",
+      "nombre": "B",
+      "activo": true,
+      "id": "aa05f178-0a97-4a55-b2ba-a584f3b24a1a"
+    },
+    {
+      "modalidadId": "primera",
+      "nombre": "C",
+      "activo": true,
+      "id": "4fbfc6dd-5c97-43b2-8f89-e08fa907f6e0"
+    },
+    {
+      "modalidadId": "primera",
+      "nombre": "D",
+      "activo": true,
+      "id": "0f73c9a6-7a84-42b8-86f7-88cef4f87202"
+    },
+    {
+      "modalidadId": "ordinario",
+      "nombre": "A",
+      "activo": true,
+      "id": "0a68b5cf-c142-4dc5-9fd9-2d0363f44ac5"
+    },
+    {
+      "modalidadId": "ordinario",
+      "nombre": "B",
+      "activo": true,
+      "id": "314fc0ba-38f7-4b17-a159-2b16986673ed"
+    },
+    {
+      "modalidadId": "ordinario",
+      "nombre": "C",
+      "activo": true,
+      "id": "800e8495-d1e2-4720-9292-4127800d1809"
+    },
+    {
+      "modalidadId": "ordinario",
+      "nombre": "D",
+      "activo": true,
+      "id": "7823cd70-3df5-4d0a-8040-5b414c23bf75"
+    },
+    {
+      "modalidadId": "cepu",
+      "nombre": "A",
+      "activo": true,
+      "id": "2698c7dd-10cf-493d-9ff2-de09446d9d87"
+    },
+    {
+      "modalidadId": "cepu",
+      "nombre": "B",
+      "activo": true,
+      "id": "33b224d8-e89f-495e-bf13-a95e85992edc"
+    },
+    {
+      "modalidadId": "cepu",
+      "nombre": "C",
+      "activo": true,
+      "id": "012a4df7-f063-47ff-acc5-54eb849b172b"
+    },
+    {
+      "modalidadId": "cepu",
+      "nombre": "D",
+      "activo": true,
+      "id": "d191e711-541f-4c84-ae82-a909d4cad70c"
+    }
+  ],
+  "instrumento": {}
+}

@@ -1,0 +1,17 @@
+{
+  "name": "encuesta-docentes-backend",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "API REST para el sistema de encuestas académicas",
+  "main": "src/server.js",
+  "scripts": {
+    "dev": "node --watch src/server.js",
+    "start": "node src/server.js"
+  },
+  "dependencies": {
+    "@google-cloud/firestore": "^9.3.1",
+    "cors": "^2.8.5",
+    "express": "^4.21.2"
+  }
+}

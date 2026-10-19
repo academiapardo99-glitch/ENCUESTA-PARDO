@@ -1,0 +1,53 @@
+# Dependencias
+node_modules/
+**/node_modules/
+.pnp
+.pnp.js
+
+# Builds
+dist/
+build/
+frontend/dist/
+frontend-estudiante/dist/
+backend/dist/
+
+# Variables de entorno y credenciales
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*service-account*.json
+*firebase-adminsdk*.json
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Caché
+.cache/
+.vite/
+.parcel-cache/
+coverage/
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editores
+.vscode/*
+!.vscode/extensions.json
+.idea/
+*.suo
+*.sw?
+
+# Python
+__pycache__/
+*.py[cod]
+venv/
+.venv/

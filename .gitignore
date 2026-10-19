@@ -51,3 +51,7 @@ __pycache__/
 *.py[cod]
 venv/
 .venv/
+# Build conjunto de Cloudflare Pages
+dist-pages/
+# Estado local de Wrangler
+**/.wrangler/

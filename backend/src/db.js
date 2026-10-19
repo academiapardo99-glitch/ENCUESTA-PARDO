@@ -83,8 +83,15 @@ export async function inicializarDb() {
   }
   // Una sola copia en memoria, compartida con supabase.js: los modelos leen
   // `db()` y escriben a través de `leer()`/`escribir()` de este módulo.
+  // Verifica conexión + tablas antes de arrancar: si Supabase o el esquema
+  // están mal, el despliegue muestra el motivo en el log en lugar de fallar
+  // más tarde con un 500 genérico.
+  const resumen = await supabase.verificarConexion();
   cache = await supabase.refrescarSupabase();
-  console.log('Persistencia: Supabase (los cambios NO se guardan en data/db.json)');
+  console.log(
+    'Persistencia: Supabase (los cambios NO se guardan en data/db.json) — ' +
+    Object.entries(resumen).map(([tabla, n]) => `${tabla}=${n}`).join(', ')
+  );
   return cache;
 }
 

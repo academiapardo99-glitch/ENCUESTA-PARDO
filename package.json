@@ -1,0 +1,16 @@
+{
+  "name": "encuesta-pardo",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Sistema de encuestas académicas: panel admin, portal del estudiante, API Express y Worker de Cloudflare",
+  "scripts": {
+    "build:cloudflare": "node scripts/build-cloudflare-pages.mjs",
+    "deploy:worker": "npm --prefix frontend-estudiante ci && npm --prefix frontend-estudiante run build && npx wrangler deploy --config worker/wrangler.jsonc",
+    "deploy:api": "npm --prefix backend ci && node backend/src/server.js",
+    "smoke": "node scripts/smoke-test-api.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

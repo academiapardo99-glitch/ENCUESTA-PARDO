@@ -14,17 +14,21 @@ import { listarCursos } from './modelos/cursos.js';
 import { listarGrupos } from './modelos/grupos.js';
 import { obtenerInstrumento } from './modelos/instrumento.js';
 import { sembrarGrupos } from './modelos/grupos.js';
-import { inicializarDb } from './db.js';
+import { inicializarDb, USAR_SUPABASE } from './db.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
 const PORT = process.env.PORT || 4000;
+// En contenedores (Cloud Run, Render) es necesario escuchar en todas las
+// interfaces; escuchar solo en localhost hace fallar el health check.
+const HOST = process.env.HOST || '0.0.0.0';
 const PORTAL_ESTUDIANTE_PUBLICO = process.env.PORTAL_ESTUDIANTE_PUBLICO === 'true';
 
-// Orígenes permitidos para el frontend en desarrollo.
+// Orígenes permitidos para el panel de Cloudflare Pages. Se acepta la lista
+// separada por comas y también un comodín por instancia (*.pages.dev).
 const ORIGENES = (process.env.CORS_ORIGIN || 'http://localhost:5173,http://127.0.0.1:5173')
   .split(',')
-  .map((o) => o.trim())
+  .map((o) => o.trim().replace(/\/$/, ''))
   .filter(Boolean);
 
 app.use(cors({ origin: ORIGENES.length ? ORIGENES : true }));
@@ -42,7 +46,12 @@ app.use((req, res, next) => {
 });
 
 app.get('/api/salud', (req, res) => {
-  res.json({ ok: true, servicio: 'encuestas-api', hora: new Date().toISOString() });
+  res.json({
+    ok: true,
+    servicio: 'encuestas-api',
+    persistencia: USAR_SUPABASE ? 'supabase' : 'json',
+    hora: new Date().toISOString(),
+  });
 });
 
 if (PORTAL_ESTUDIANTE_PUBLICO) {
@@ -120,8 +129,8 @@ try {
   process.exit(1);
 }
 
-const servidor = app.listen(PORT, () => {
-  console.log(`API de encuestas escuchando en http://localhost:${PORT}`);
+const servidor = app.listen(PORT, HOST, () => {
+  console.log(`API de encuestas escuchando en http://${HOST}:${PORT}`);
 });
 
 // Mensaje claro si el puerto ya está ocupado (otra instancia del backend, un

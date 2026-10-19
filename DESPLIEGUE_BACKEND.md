@@ -4,6 +4,9 @@ El Worker `encuesta-estudiantes` atiende el portal público y consulta Supabase.
 El servicio definido en `render.yaml` publica el backend Express para el panel
 administrativo y usa el mismo proyecto Supabase.
 
+> Guía completa de Cloudflare Workers + Cloudflare Pages + Supabase:
+> [DESPLIEGUE_CLOUDFLARE.md](DESPLIEGUE_CLOUDFLARE.md).
+
 ## 1. Crear el servicio en Render
 
 1. Sube estos cambios al repositorio de GitHub.
@@ -20,12 +23,16 @@ El backend usa `PERSISTENCIA=supabase`. No usa `backend/data/db.json` en Render.
 
 ## 2. Conectar el panel
 
-En la configuración del proyecto de Cloudflare Pages para `frontend/`, establece:
+En el proyecto de Cloudflare Pages (raíz del repositorio), establece:
 
-- Directorio raíz: `frontend`
-- Comando de compilación: `npm run build`
-- Directorio de salida: `dist`
+- Directorio raíz: *(vacío, `./`)*
+- Comando de compilación: `npm run build:cloudflare`
+- Directorio de salida: `dist-pages`
 - Variable de compilación `VITE_API_URL`: `https://URL-DE-RENDER/api`
+
+El script compila el panel (en `/`) y el portal del estudiante (en
+`/estudiante/`). Alternativa de un solo panel: raíz `frontend`, compilación
+`npm run build`, salida `dist`.
 
 Después de guardar `VITE_API_URL`, vuelve a desplegar Pages. Actualiza
 `CORS_ORIGIN` en Render con el dominio público exacto de Pages.

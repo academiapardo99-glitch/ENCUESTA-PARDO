@@ -133,7 +133,9 @@ try {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ docenteId, cursoId, grupoId: tablas.grupos[0].id, modalidadId: 'colegio', respuestas }),
   });
-  comprobar('POST /api/encuestas guarda con creado_en', r.estado === 201 && tablas.encuestas.length === 1 && !!tablas.encuestas[0].creado_en, `${r.estado}`);
+  // Columnas camelCase: son las mismas que escribe el Worker, así que las
+  // encuestas del portal aparecen en el panel.
+  comprobar('POST /api/encuestas guarda con creadoEn y docenteId', r.estado === 201 && tablas.encuestas.length === 1 && !!tablas.encuestas[0].creadoEn && tablas.encuestas[0].docenteId === docenteId, `${r.estado}`);
 
   r = await pedir('/api/encuestas');
   comprobar('GET /api/encuestas devuelve creadoEn', r.datos?.length === 1 && !!r.datos[0].creadoEn, `${r.datos?.[0]?.docenteNombre}`);

@@ -4,28 +4,58 @@
 // el catálogo.
 import { db, escribir, leer, nuevoId, USAR_SUPABASE } from '../db.js';
 import { MODALIDADES } from '../catalogo.js';
-import { guardarEncuestaFirestore } from '../firestore.js';
 import { listarGrupos } from './grupos.js';
 import { listarDocentes } from './docentes.js';
 import { listarCursos } from './cursos.js';
 
-// En Supabase la tabla `encuestas` usa `creado_en` como clave primaria y
-// respuestas en JSONB; en local se conserva el objeto tal cual.
-function filaEncuesta(e) {
-  if (!USAR_SUPABASE) return e;
-  const { creadoEn, ...resto } = e;
-  return { ...resto, creado_en: creadoEn };
+// La tabla `encuestas` usa `id` como clave primaria y las mismas columnas
+// camelCase que los modelos (`creadoEn`, `docenteId`, ...). El Worker público y
+// este backend escriben por tanto en las MISMAS columnas, así que las encuestas
+// del portal aparecen en el panel administrativo. Las columnas snake_case del
+// esquema quedan como respaldo para registros antiguos.
+function normalizarEncuesta(e) {
+  const creadoEn = e.creadoEn || e.creado_en || null;
+  const base = { ...e };
+  delete base.creado_en;
+  return {
+    ...base,
+    docenteId: e.docenteId ?? e.docente_id ?? '',
+    cursoId: e.cursoId ?? e.curso_id ?? '',
+    modalidadId: e.modalidadId ?? e.modalidad_id ?? '',
+    grupoId: e.grupoId ?? e.grupo_id ?? '',
+    docenteNombre: e.docenteNombre ?? e.docente_nombre ?? '—',
+    cursoNombre: e.cursoNombre ?? e.curso_nombre ?? '—',
+    modalidadNombre: e.modalidadNombre ?? e.modalidad_nombre ?? '—',
+    grupoNombre: e.grupoNombre ?? e.grupo_nombre ?? '—',
+    creadoEn,
+    // `id` es la clave primaria (text). Los registros antiguos sin id se
+    // identifican por la fecha de creación para no romper el panel.
+    id: e.id || creadoEn || '',
+  };
 }
 
-function desdeFilaEncuesta(fila) {
-  const { creado_en, ...resto } = fila;
-  return { ...resto, creadoEn: creado_en };
+// En Supabase se inserta solo con las columnas del esquema (sin claves extra);
+// en local se conserva el objeto tal cual.
+function filaEncuesta(e) {
+  if (!USAR_SUPABASE) return e;
+  return {
+    id: e.id,
+    docenteId: e.docenteId,
+    cursoId: e.cursoId,
+    modalidadId: e.modalidadId,
+    grupoId: e.grupoId,
+    docenteNombre: e.docenteNombre,
+    cursoNombre: e.cursoNombre,
+    modalidadNombre: e.modalidadNombre,
+    grupoNombre: e.grupoNombre,
+    respuestas: e.respuestas,
+    creadoEn: e.creadoEn || new Date().toISOString(),
+  };
 }
 
 export function listarEncuestas() {
-  const encuestas = leer('encuestas');
-  return encuestas
-    .map((e) => ({ ...(e.creado_en ? desdeFilaEncuesta(e) : e) }))
+  return leer('encuestas')
+    .map(normalizarEncuesta)
     .sort((a, b) => String(b.creadoEn || '').localeCompare(String(a.creadoEn || '')));
 }
 
@@ -49,11 +79,7 @@ export async function crearEncuesta(payload) {
     respuestas: { ...(payload.respuestas || {}) }, // { [preguntaId]: 1..10 }
     creadoEn: new Date().toISOString(),
   };
-  if (process.env.PERSISTENCIA === 'firestore') {
-    await guardarEncuestaFirestore(encuesta);
-  } else {
-    await escribir('encuestas', (previas) => [...previas, encuesta], (items) => items.map(filaEncuesta));
-  }
+  await escribir('encuestas', (previas) => [...previas, encuesta], (items) => items.map(filaEncuesta));
   return encuesta;
 }
 

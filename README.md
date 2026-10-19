@@ -48,6 +48,16 @@ Los detalles (portal público, RLS, Worker) están en [SUPABASE.md](SUPABASE.md)
 La configuración para publicar el backend administrativo y conectarlo con el
 panel está en [DESPLIEGUE_BACKEND.md](DESPLIEGUE_BACKEND.md).
 
+Para Cloudflare (Worker del portal + Pages del panel + Supabase) sigue
+[DESPLIEGUE_CLOUDFLARE.md](DESPLIEGUE_CLOUDFLARE.md):
+
+```powershell
+npm run deploy:worker     # compila el portal y despliega el Worker
+```
+
+En Cloudflare Pages: comando `npm run build:cloudflare`, salida `dist-pages`
+(panel en `/`, encuesta en `/estudiante/`).
+
 La guía completa para publicar el portal de estudiantes está en [DESPLIEGUE_GOOGLE.md](DESPLIEGUE_GOOGLE.md). Google Drive puede guardar los archivos, pero no servir la aplicación interactiva como web.
 
 ### Publicar el portal de estudiantes

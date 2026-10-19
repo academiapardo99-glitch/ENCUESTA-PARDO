@@ -19,14 +19,41 @@ let cache = null;
 let refresco = null;
 
 function config() {
-  const url = (process.env.SUPABASE_URL || '').replace(/\/+$/, '');
-  const key = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_KEY || '';
+  const url = (process.env.SUPABASE_URL || '').trim().replace(/\/+$/, '');
+  const key = (process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_KEY || '').trim();
   if (!url || !key) {
     throw new Error(
       'Faltan SUPABASE_URL y SUPABASE_SERVICE_ROLE_KEY. Configúralas para usar PERSISTENCIA=supabase.'
     );
   }
+  // Error típico al desplegar: pegar la URL del dashboard en vez de la del API.
+  if (!/^https?:\/\//.test(url) || /\/rest\/v1/.test(url)) {
+    throw new Error(
+      `SUPABASE_URL no es válida ("${url}"). Debe ser https://TU-PROYECTO.supabase.co sin /rest/v1.`
+    );
+  }
   return { url, key };
+}
+
+/**
+ * Comprueba la conexión y el esquema antes de abrir el puerto. Devuelve un
+ * resumen legible para el log del despliegue (Render, Docker, local).
+ */
+export async function verificarConexion() {
+  const { url } = config();
+  const resultados = {};
+  for (const tabla of COLECCIONES) {
+    try {
+      resultados[tabla] = (await leerTabla(tabla)).length;
+    } catch (error) {
+      throw new Error(
+        `${error.message}\n` +
+        `Revisa en Supabase: (1) que ejecutaste worker/supabase-schema.sql, ` +
+        `(2) que SUPABASE_URL es ${url} y (3) que la clave es la service_role del mismo proyecto.`
+      );
+    }
+  }
+  return resultados;
 }
 
 function cabeceras(extra = {}) {
@@ -151,9 +178,11 @@ export function escribir(coleccion, items, filas = (lista) => lista) {
   });
 }
 
-// Columna que identifica cada fila. En Supabase las encuestas usan
-// `creado_en` como clave primaria (ver SUPABASE.md).
-const CLAVES = { cursos: 'id', docentes: 'id', grupos: 'id', encuestas: 'creado_en' };
+// Columna que identifica cada fila. Las cuatro tablas usan `id` como clave
+// primaria (ver worker/supabase-schema.sql). Antes las encuestas se buscaban por
+// `creado_en`, una columna que no es clave: cada escritura borraba encuestas por
+// error.
+const CLAVES = { cursos: 'id', docentes: 'id', grupos: 'id', encuestas: 'id' };
 function claveDe(coleccion) {
   return CLAVES[coleccion] || 'id';
 }

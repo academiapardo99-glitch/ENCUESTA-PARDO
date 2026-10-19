@@ -7,18 +7,36 @@ import { guardarEncuestaSupabase, leerColeccion } from './supabase.js';
 import { INSTRUMENTO_POR_DEFECTO, MODALIDADES, VALORES_ESCALA } from './catalogo.js';
 
 const app = new Hono();
-app.use('/api/*', cors());
+// CORS_ORIGIN (opcional) permite restringir quién puede llamar a la API desde
+// el navegador; sin la variable se permite cualquier origen (comodín).
+app.use('/api/*', cors({ origin: (origen, c) => c.env.CORS_ORIGIN || origen || '*' }));
 
 const config = (env) => {
-  const url = (env.SUPABASE_URL || '').replace(/\/+$/, '');
-  const key = env.SUPABASE_KEY || '';
+  const url = (env.SUPABASE_URL || '').trim().replace(/\/+$/, '');
+  const key = (env.SUPABASE_KEY || '').trim();
   if (!url || !key) throw new Error('Faltan SUPABASE_URL y SUPABASE_KEY (wrangler secret put).');
+  if (!/^https?:\/\//.test(url) || /\/rest\/v1/.test(url)) {
+    throw new Error(`SUPABASE_URL no es válida ("${url}"). Debe ser https://TU-PROYECTO.supabase.co sin /rest/v1.`);
+  }
   return { url, key };
 };
 
+// Devuelve el detalle del fallo de Supabase en JSON (el navegador lo muestra
+// como "Error al enviar la encuesta") y lo deja en los logs de Cloudflare.
+app.onError((err, c) => {
+  console.error(`[api] ${err.message}`);
+  return c.json({ error: err.message }, 500);
+});
+
 const nuevoId = () => crypto.randomUUID();
 
-app.get('/api/salud', (c) => c.json({ ok: true, servicio: 'encuesta-estudiantes', hora: new Date().toISOString() }));
+app.get('/api/salud', (c) => c.json({
+  ok: true,
+  servicio: 'encuesta-estudiantes',
+  persistencia: 'supabase',
+  supabaseConfigurado: Boolean(c.env.SUPABASE_URL && c.env.SUPABASE_KEY),
+  hora: new Date().toISOString(),
+}));
 
 // Catálogo depurado: sin correos ni historial.
 app.get('/api/docentes', async (c) => {
@@ -46,7 +64,36 @@ app.get('/api/grupos', async (c) => {
 
 app.get('/api/instrumento', (c) => c.json(INSTRUMENTO_POR_DEFECTO));
 
-app.get('/api/encuestas', (c) => c.json({ error: 'Ruta no disponible en el portal público.' }, 404));
+// Historial de solo lectura: el panel (Cloudflare Pages) puede usar este mismo
+// Worker como API. Borrar/editar encuestas sigue fuera de alcance.
+app.get('/api/encuestas', async (c) => {
+  const filas = await leerColeccion('encuestas', config(c.env));
+  const encuestas = filas
+    .map((e) => ({
+      ...e,
+      docenteId: e.docenteId ?? e.docente_id ?? '',
+      cursoId: e.cursoId ?? e.curso_id ?? '',
+      modalidadId: e.modalidadId ?? e.modalidad_id ?? '',
+      grupoId: e.grupoId ?? e.grupo_id ?? '',
+      docenteNombre: e.docenteNombre ?? e.docente_nombre ?? '—',
+      cursoNombre: e.cursoNombre ?? e.curso_nombre ?? '—',
+      modalidadNombre: e.modalidadNombre ?? e.modalidad_nombre ?? '—',
+      grupoNombre: e.grupoNombre ?? e.grupo_nombre ?? '—',
+      creadoEn: e.creadoEn || e.creado_en || null,
+    }))
+    .sort((a, b) => String(b.creadoEn || '').localeCompare(String(a.creadoEn || '')));
+  return c.json(encuestas);
+});
+
+// El panel administrativo usa estas rutas para listar el catálogo completo
+// (incluye inactivos); el portal solo usa las de arriba.
+app.get('/api/docentes/todos', async (c) => {
+  return c.json(await leerColeccion('docentes', config(c.env)));
+});
+
+app.get('/api/cursos/todos', async (c) => {
+  return c.json(await leerColeccion('cursos', config(c.env)));
+});
 
 app.post('/api/encuestas', async (c) => {
   const cuerpo = await c.req.json().catch(() => null);

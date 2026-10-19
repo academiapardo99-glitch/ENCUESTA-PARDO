@@ -86,18 +86,23 @@ pensada para publicar el portal sin exponer el panel administrativo:
 ```bash
 cd worker
 npm install
-npx wrangler secret put SUPABASE_URL
-npx wrangler secret put SUPABASE_KEY     # service_role (o anon con la política de insert)
-cd ../frontend-estudiante && npm run build
-cd ../worker && npx wrangler deploy
+npx wrangler secret put SUPABASE_URL     # https://xxxx.supabase.co (sin /rest/v1)
+npx wrangler secret put SUPABASE_KEY     # anon (el esquema ya trae las políticas)
+npm run desplegar                        # compila frontend-estudiante y hace wrangler deploy
 ```
 
 El Worker sirve `frontend-estudiante/dist` como assets y atiende `/api/*`.
+La configuración está en `worker/wrangler.jsonc`. En despliegue por Git, el
+root es `worker` y el comando de despliegue `npx wrangler deploy`. Los pasos
+de Cloudflare Pages y la conexión con el panel están en
+[DESPLIEGUE_CLOUDFLARE.md](DESPLIEGUE_CLOUDFLARE.md).
 
 ## Cómo funciona internamente
 
 - `backend/src/db.js` mantiene la misma interfaz que antes (`db`, `leer`,
   `escribir`). Con `PERSISTENCIA=supabase` delega en `backend/src/supabase.js`.
+- Al arrancar se comprueba la conexión y que existan las cuatro tablas; si no,
+  el proceso termina con el detalle del error en el log.
 - `supabase.js` carga las cuatro colecciones al arrancar y las mantiene en
   memoria. `escribir()` sube la colección completa con `Prefer:
   resolution=merge-duplicates` (upsert) y elimina en Supabase las filas que ya no

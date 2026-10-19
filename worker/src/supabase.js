@@ -1,6 +1,15 @@
 // ===== Cliente Supabase (REST) para Cloudflare Workers =====
 // Usa fetch nativo en lugar del SDK Node para ser compatible con el runtime edge.
 
+/**
+ * Convierte el cuerpo de error de PostgREST en un texto apto para una
+ * cabecera HTTP. El cliente recibe el detalle ya decodificado (worker/src/index.js).
+ */
+function detalleError(res, texto) {
+  const crudo = (texto || '').trim().replace(/\s+/g, ' ').slice(0, 180);
+  return `${res.status}${crudo ? `: ${crudo}` : ''}`;
+}
+
 function cabeceras({ key }, extra = {}) {
   return {
     'Content-Type': 'application/json',
@@ -18,7 +27,7 @@ export async function leerColeccion(tabla, { url, key }) {
   const res = await fetch(`${url}/rest/v1/${tabla}?select=*`, { headers: cabeceras({ key }) });
   if (!res.ok) {
     const texto = await res.text().catch(() => '(sin cuerpo)');
-    throw new Error(`Supabase GET ${tabla} ${res.status}: ${texto}`);
+    throw new Error(`Supabase GET ${tabla} ${detalleError(res, texto)}`);
   }
   return res.json();
 }
@@ -38,9 +47,9 @@ export async function guardarEncuestaSupabase(encuesta, { url, key }) {
       Authorization: `Bearer ${key}`,
       Prefer: 'return=minimal',
     },
+    // Mismas columnas camelCase que escribe el backend administrativo: las
+    // respuestas del portal aparecen directamente en el panel.
     body: JSON.stringify({
-      // Se escriben ambas formas: el panel administrativo lee las columnas
-      // camelCase, y las snake_case quedan como respaldo explícito.
       id: encuesta.id,
       "creadoEn": encuesta.creadoEn || new Date().toISOString(),
       "docenteId": encuesta.docenteId,
@@ -51,22 +60,13 @@ export async function guardarEncuestaSupabase(encuesta, { url, key }) {
       "cursoNombre": encuesta.cursoNombre,
       "modalidadNombre": encuesta.modalidadNombre,
       "grupoNombre": encuesta.grupoNombre,
-      creado_en: encuesta.creadoEn || new Date().toISOString(),
-      docente_id: encuesta.docenteId,
-      curso_id: encuesta.cursoId,
-      modalidad_id: encuesta.modalidadId,
-      grupo_id: encuesta.grupoId,
-      docente_nombre: encuesta.docenteNombre,
-      curso_nombre: encuesta.cursoNombre,
-      modalidad_nombre: encuesta.modalidadNombre,
-      grupo_nombre: encuesta.grupoNombre,
       respuestas: encuesta.respuestas,
     }),
   });
 
   if (!res.ok) {
     const texto = await res.text().catch(() => '(sin cuerpo)');
-    throw new Error(`Supabase ${res.status}: ${texto}`);
+    throw new Error(`Supabase POST encuestas ${detalleError(res, texto)}`);
   }
 }
 

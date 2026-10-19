@@ -1,0 +1,5 @@
+# Cloudflare Pages: el panel es una SPA (React con una sola ruta).
+# Si despliegas SOLO el panel (root: frontend, salida: dist), este archivo
+# evita error 404 al recargar. En el despliegue conjunto (dist-pages) se usa
+# el _redirects generado por scripts/build-cloudflare-pages.mjs.
+/*  /index.html  200

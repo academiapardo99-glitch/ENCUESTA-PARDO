@@ -126,6 +126,12 @@ const PATHS = {
   estrella: (
     <path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2L12 17.3 6.4 20.2l1.1-6.2L3 9.6l6.2-.9z" />
   ),
+  tendencia: (
+    <>
+      <path d="m3 17 6-6 4 4 8-8" />
+      <path d="M21 7h-6M21 7v6" />
+    </>
+  ),
   check: <path d="m4 12 5 5L20 6" />,
   alerta: (
     <>
@@ -219,8 +225,9 @@ const PATHS = {
 export const ICONOS_MODALIDAD = {
   colegio: { icon: 'escuela', color: '#1e4e8c' },
   primera: { icon: 'estrella', color: '#b7791f' },
+  'primera-avanzado': { icon: 'tendencia', color: '#975a16' },
   ordinario: { icon: 'universidad', color: '#2c7a7b' },
-  cepru: { icon: 'verificado', color: '#6b46c1' },
+  cepu: { icon: 'verificado', color: '#6b46c1' },
   ordinario_nocturno: { icon: 'nocturno', color: '#2d3748' },
   virtual: { icon: 'online', color: '#2b6cb0' },
   verano: { icon: 'verano', color: '#c05621' },

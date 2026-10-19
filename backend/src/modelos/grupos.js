@@ -2,7 +2,7 @@
 import { db, escribir } from '../db.js';
 import { gruposPorDefecto, sincronizarGrupos } from '../catalogo.js';
 
-// Devuelve los 16 grupos canónicos, sincronizando el archivo si hace falta.
+// Devuelve los 20 grupos canónicos, sincronizando el archivo si hace falta.
 export function listarGrupos() {
   const actuales = db().grupos;
   const sincronizados = sincronizarGrupos(actuales);

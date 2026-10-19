@@ -3,7 +3,7 @@ import { listarGrupos, actualizarGrupo } from '../modelos/grupos.js';
 
 const router = Router();
 
-// Siempre devuelve los 16 grupos (4 modalidades × 4 grupos A–D).
+// Siempre devuelve los 20 grupos (5 modalidades × 4 grupos A–D).
 router.get('/', (req, res) => {
   res.json(listarGrupos());
 });

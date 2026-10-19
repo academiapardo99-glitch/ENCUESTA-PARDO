@@ -8,6 +8,7 @@ import { http } from '../api/cliente.js';
 export const MODALIDADES = [
   { id: 'colegio', nombre: 'Colegio', icono: 'escuela', descripcion: 'Alumnos que provienen del nivel secundario' },
   { id: 'primera', nombre: 'Primera Opción', icono: 'estrella', descripcion: 'Postulantes que eligen esta carrera como primera opción' },
+  { id: 'primera-avanzado', nombre: 'Primera Opción Avanzado', icono: 'tendencia', descripcion: 'Postulantes de Primera Opción con preparación avanzada' },
   { id: 'ordinario', nombre: 'Ordinario', icono: 'universidad', descripcion: 'Admisión en el examen ordinario' },
   { id: 'cepu', nombre: 'Ordinario Cepru', icono: 'verificado', descripcion: 'Centro de Estudios Preuniversitarios' },
 ];
@@ -35,7 +36,7 @@ export const cursosService = {
 export const gruposService = {
   listar: () => http.get('/grupos'),
   actualizar: (id, cambios) => http.patch(`/grupos/${id}`, cambios),
-  // El servidor ya garantiza los 16 grupos canónicos; este método se conserva
+  // El servidor ya garantiza los 20 grupos canónicos; este método se conserva
   // por compatibilidad con el contexto y simplemente relee el catálogo.
   sincronizar: () => http.get('/grupos'),
 };

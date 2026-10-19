@@ -99,9 +99,9 @@ La encuesta pública para estudiantes se ejecuta del mismo modo desde
 | **Grupo** | `modalidadId` × `nombre` (A, B, C o D) — siempre 16 |
 | **Encuesta** | `respuestas { [preguntaId]: 1..10 }`, ids y nombres congelados |
 
-Modalidades: **Colegio**, **Primera Opción**, **Ordinario** y
-**Ordinario Cepru**. Cada una se divide en los grupos **A, B, C y D**
-(4 × 4 = 16 grupos).
+Modalidades: **Colegio**, **Primera Opción**, **Primera Opción Avanzado**,
+**Ordinario** y **Ordinario Cepru**. Cada una se divide en los grupos
+**A, B, C y D** (5 × 4 = 20 grupos).
 
 ## Endpoints principales
 
@@ -110,7 +110,7 @@ Modalidades: **Colegio**, **Primera Opción**, **Ordinario** y
 | GET | `/api/salud` | Estado del servicio |
 | GET/POST/PUT/DELETE | `/api/docentes[/:id]` | CRUD de docentes |
 | GET/POST/PUT/DELETE | `/api/cursos[/:id]` | CRUD de cursos |
-| GET | `/api/grupos` | Los 16 grupos |
+| GET | `/api/grupos` | Los 20 grupos |
 | PATCH | `/api/grupos/:id` | Activa/desactiva un grupo |
 | GET/POST | `/api/encuestas` | Lista / registra encuestas |
 | GET | `/api/encuestas/catalogo` | Modalidades y grupos base |

@@ -45,7 +45,7 @@ Para producción en Cloud Run, configura `PERSISTENCIA=firestore` y asigna a la 
 | POST   | `/api/cursos`             | Crea un curso                   |
 | PUT    | `/api/cursos/:id`         | Actualiza un curso              |
 | DELETE | `/api/cursos/:id`         | Elimina un curso                |
-| GET    | `/api/grupos`             | Los 16 grupos (modalidad × A–D) |
+| GET    | `/api/grupos`             | Los 20 grupos (modalidad × A–D) |
 | PATCH  | `/api/grupos/:id`         | Activa/desactiva un grupo       |
 | GET    | `/api/encuestas`          | Lista de encuestas              |
 | POST   | `/api/encuestas`          | Registra una encuesta           |

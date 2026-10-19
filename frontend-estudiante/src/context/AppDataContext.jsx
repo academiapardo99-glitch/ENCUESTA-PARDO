@@ -26,7 +26,7 @@ export function AppDataProvider({ children }) {
       const [cs, ds, gs] = await Promise.all([
         cursosService.listar(),
         docentesService.listar(),
-        // El servidor garantiza siempre los 16 grupos (4 modalidades × A–D).
+        // El servidor garantiza siempre los 20 grupos (5 modalidades × A–D).
         gruposService.listar(),
       ]);
       setCursos(cs);

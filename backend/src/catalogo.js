@@ -3,6 +3,7 @@
 export const MODALIDADES = [
   { id: 'colegio', nombre: 'Colegio', icono: 'escuela', descripcion: 'Alumnos que provienen del nivel secundario' },
   { id: 'primera', nombre: 'Primera Opción', icono: 'estrella', descripcion: 'Postulantes que eligen esta carrera como primera opción' },
+  { id: 'primera-avanzado', nombre: 'Primera Opción Avanzado', icono: 'tendencia', descripcion: 'Postulantes de Primera Opción con preparación avanzada' },
   { id: 'ordinario', nombre: 'Ordinario', icono: 'universidad', descripcion: 'Admisión en el examen ordinario' },
   { id: 'cepu', nombre: 'Ordinario Cepru', icono: 'verificado', descripcion: 'Centro de Estudios Preuniversitarios' },
 ];
@@ -10,7 +11,7 @@ export const MODALIDADES = [
 // Todos los grados de cada modalidad se dividen siempre en estos 4 grupos.
 export const GRUPOS_BASE = ['A', 'B', 'C', 'D'];
 
-// Combinación modalidad × grupo: 4 × 4 = 16 grupos.
+// Combinación modalidad × grupo: 5 × 4 = 20 grupos.
 export function gruposPorDefecto() {
   const lista = [];
   for (const m of MODALIDADES) {

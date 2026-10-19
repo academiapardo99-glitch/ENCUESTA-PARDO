@@ -73,17 +73,18 @@ function nuevoId() {
   return globalThis.crypto?.randomUUID?.() ?? `id-${Date.now()}-${Math.random().toString(16).slice(2)}`;
 }
 
-// Carga inicial desde Supabase. Fallar aquí es preferible a arrancar con la
-// base vacía y sobrescribirla en el primer guardado.
+// Carga inicial. Fallar aquí (Supabase caído, credenciales malas) es preferible
+// a arrancar con la base vacía y sobrescribirla en el primer guardado.
 export async function inicializarDb() {
   if (!USAR_SUPABASE) {
     cache = leerDisco();
+    console.log(`Persistencia: archivo local ${DB_FILE}`);
     return cache;
   }
   // Una sola copia en memoria, compartida con supabase.js: los modelos leen
   // `db()` y escriben a través de `leer()`/`escribir()` de este módulo.
   cache = await supabase.refrescarSupabase();
-  console.log('Persistencia: Supabase');
+  console.log('Persistencia: Supabase (los cambios NO se guardan en data/db.json)');
   return cache;
 }
 

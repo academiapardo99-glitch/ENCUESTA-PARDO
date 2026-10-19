@@ -38,12 +38,12 @@ export function sincronizarGrupos(grupos) {
     if (base) {
       // Un registro heredado puede no tener id: se le asigna uno nuevo para
       // que la colección siempre tenga ids únicos y válidos.
-      const id = base.id || nuevoIdSeguro();
+      const id = base.id || `g-${e.modalidadId}-${e.nombre.toLowerCase()}`;
       usados.add(id);
       resultado.push({ ...base, id, activo: base.activo !== false });
     } else {
       resultado.push({
-        id: nuevoIdSeguro(),
+        id: `g-${e.modalidadId}-${e.nombre.toLowerCase()}`,
         modalidadId: e.modalidadId,
         nombre: e.nombre,
         activo: true,
@@ -52,10 +52,6 @@ export function sincronizarGrupos(grupos) {
     }
   }
   return resultado;
-}
-
-function nuevoIdSeguro() {
-  return globalThis.crypto?.randomUUID?.() ?? `g-${Date.now()}-${Math.random().toString(16).slice(2)}`;
 }
 
 // ===== Instrumento fijo de evaluación docente =====

@@ -2,6 +2,7 @@ import { Router } from 'express';
 import {
   listarDocentes, crearDocente, actualizarDocente, eliminarDocente,
 } from '../modelos/docentes.js';
+import { listarCursos } from '../modelos/cursos.js';
 
 const router = Router();
 
@@ -16,6 +17,12 @@ router.post('/', async (req, res, next) => {
     if (!cursoId) return res.status(400).json({ error: 'Debe seleccionar un curso.' });
     if (!Array.isArray(modalidadIds) || modalidadIds.length === 0) {
       return res.status(400).json({ error: 'Seleccione al menos una modalidad que enseña.' });
+    }
+    // Aviso (no bloquea): sin grupos en el curso, el docente no aparecerá en el
+    // portal del estudiante porque no se puede saber a qué grupo pertenece.
+    const curso = listarCursos().find((c) => c.id === cursoId);
+    if (curso && curso.grupoIds.length === 0) {
+      console.warn(`Docente nuevo en el curso "${curso.nombre}", que no tiene grupos: no aparecerá en el portal.`);
     }
     res.status(201).json(await crearDocente(req.body));
   } catch (error) {

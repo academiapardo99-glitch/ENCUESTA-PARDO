@@ -256,7 +256,8 @@
       "cursoId": "1073f980-c70e-4020-9e17-e2c18441df87",
       "modalidadIds": [
         "colegio",
-        "primera"
+        "primera",
+        "primera-avanzado"
       ],
       "estado": "activo",
       "codigo": "DOC-004",
@@ -280,7 +281,8 @@
       "cursoId": "1073f980-c70e-4020-9e17-e2c18441df87",
       "modalidadIds": [
         "primera",
-        "colegio"
+        "colegio",
+        "primera-avanzado"
       ],
       "estado": "activo",
       "codigo": "DOC-006",
@@ -330,7 +332,8 @@
         "colegio",
         "primera",
         "ordinario",
-        "cepu"
+        "cepu",
+        "primera-avanzado"
       ],
       "estado": "activo",
       "codigo": "DOC-010",
@@ -378,7 +381,8 @@
       "cursoId": "a8a08f01-2b6b-45bf-b9b5-7514dbb94ad9",
       "modalidadIds": [
         "colegio",
-        "primera"
+        "primera",
+        "primera-avanzado"
       ],
       "estado": "activo",
       "codigo": "DOC-014",
@@ -392,7 +396,8 @@
         "colegio",
         "primera",
         "ordinario",
-        "cepu"
+        "cepu",
+        "primera-avanzado"
       ],
       "estado": "activo",
       "codigo": "DOC-015",
@@ -401,12 +406,13 @@
     {
       "id": "3b225316-47ba-461c-8965-9379f0eb39bd",
       "nombre": "DARIO",
-      "cursoId": "61d2b4c0-31b0-4c85-994d-f6754821c4cc",
+      "cursoId": "994fa8b1-761f-4328-b243-59a8d3674861",
       "modalidadIds": [
         "colegio",
         "primera",
         "cepu",
-        "ordinario"
+        "ordinario",
+        "primera-avanzado"
       ],
       "estado": "activo",
       "codigo": "DOC-016",
@@ -418,7 +424,8 @@
       "cursoId": "ad9b63c7-6c99-4819-ae0e-3916f23808d8",
       "modalidadIds": [
         "colegio",
-        "primera"
+        "primera",
+        "primera-avanzado"
       ],
       "estado": "activo",
       "codigo": "DOC-017",
@@ -522,7 +529,8 @@
       "cursoId": "86a5ff35-84da-458c-9f1e-5ac88eb357e3",
       "modalidadIds": [
         "ordinario",
-        "cepu"
+        "cepu",
+        "primera-avanzado"
       ],
       "estado": "activo",
       "codigo": "DOC-025",
@@ -534,7 +542,8 @@
       "cursoId": "1073f980-c70e-4020-9e17-e2c18441df87",
       "modalidadIds": [
         "ordinario",
-        "cepu"
+        "cepu",
+        "primera-avanzado"
       ],
       "estado": "activo",
       "codigo": "DOC-026",
@@ -558,7 +567,8 @@
       "cursoId": "0cdab7c5-2d64-44ac-ad1a-9f75c712cdcf",
       "modalidadIds": [
         "ordinario",
-        "cepu"
+        "cepu",
+        "primera-avanzado"
       ],
       "estado": "activo",
       "codigo": "DOC-028",
@@ -635,6 +645,52 @@
       "estado": "activo",
       "codigo": "DOC-034",
       "creadoEn": "2026-10-19T13:07:02.985Z"
+    },
+    {
+      "id": "0b7ef557-34dd-4f3f-9d21-418a17f8494b",
+      "nombre": "MANCHAS",
+      "cursoId": "a8a08f01-2b6b-45bf-b9b5-7514dbb94ad9",
+      "modalidadIds": [
+        "primera-avanzado"
+      ],
+      "estado": "activo",
+      "codigo": "DOC-035",
+      "creadoEn": "2026-10-19T16:14:29.893Z"
+    },
+    {
+      "id": "d4d4cf6d-cea0-4a6a-8471-3f8526f80b86",
+      "nombre": "FABRICIO",
+      "cursoId": "a8a08f01-2b6b-45bf-b9b5-7514dbb94ad9",
+      "modalidadIds": [
+        "primera-avanzado"
+      ],
+      "estado": "activo",
+      "codigo": "DOC-036",
+      "creadoEn": "2026-10-19T16:14:38.788Z"
+    },
+    {
+      "id": "2411542e-e65b-4ed3-b24c-d5459b42f716",
+      "nombre": "MICHELL",
+      "cursoId": "4ed44465-2a86-4f9a-8c87-d31e9db50fa5",
+      "modalidadIds": [
+        "primera-avanzado",
+        "ordinario",
+        "cepu"
+      ],
+      "estado": "activo",
+      "codigo": "DOC-037",
+      "creadoEn": "2026-10-19T16:14:57.998Z"
+    },
+    {
+      "id": "c34e4233-a060-4b65-a0ec-cc6576939a26",
+      "nombre": "LUCHO",
+      "cursoId": "86a5ff35-84da-458c-9f1e-5ac88eb357e3",
+      "modalidadIds": [
+        "primera-avanzado"
+      ],
+      "estado": "activo",
+      "codigo": "DOC-038",
+      "creadoEn": "2026-10-19T16:16:06.636Z"
     }
   ],
   "encuestas": [],

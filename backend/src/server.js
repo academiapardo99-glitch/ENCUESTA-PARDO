@@ -105,9 +105,24 @@ app.use((err, req, res, next) => {
   res.status(500).json({ error: 'Error interno del servidor.' });
 });
 
-// Siembra de grupos al arrancar (idempotente: siempre 16).
+// Siembra de grupos al arrancar (idempotente: siempre 20 = 5 modalidades × A–D).
 sembrarGrupos();
 
-app.listen(PORT, () => {
+const servidor = app.listen(PORT, () => {
   console.log(`API de encuestas escuchando en http://localhost:${PORT}`);
+});
+
+// Mensaje claro si el puerto ya está ocupado (otra instancia del backend, un
+// reinicio de nodemon/--watch, etc.) en lugar del volcado de "Unhandled 'error'".
+servidor.on('error', (err) => {
+  if (err.code === 'EADDRINUSE') {
+    console.error(
+      `\n[ERROR] El puerto ${PORT} ya está en uso.\n` +
+      `Hay otra instancia del backend corriendo o quedó un proceso anterior sin cerrar.\n` +
+      `Cierra esa instancia o cambia el puerto:  $env:PORT=4001; npm run dev\n`
+    );
+    process.exit(1);
+  }
+  console.error('Error del servidor:', err);
+  process.exit(1);
 });
